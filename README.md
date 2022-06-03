@@ -22,13 +22,13 @@ Changed H0. (Primary spindle incremental adress) => C0. (When primary spindle is
 
 Changed G-Code export description for better differentiating (Only addeed a word...)
 
-Removed M31 & M32 when secondary spindle is active (Works... (For now...**(Used olny once)**)).
+Removed M31 & M32 when secondary spindle is active (Works... (For now...**(Used olny once)**))
 
 # Stuff to do:
 
 Get rid of the lone C0. (Polar stuff... (Hard))
 
-Insert before CO/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly)).
+Insert before CO/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))
 
 
 
