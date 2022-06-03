@@ -3281,7 +3281,7 @@ function onCyclePoint(x, y, z) {
         writeCycleClearance(plane, cycle.clearance);
         localZOutput.reset();
         writeBlock(
-          gCycleModal.format(plane == 19 ? 87.5 : 83.5),
+          gCycleModal.format(plane == 19 ? 87.5 : 83), //Changed 83.5 to 83 -AHF
           getCommonCycle(x, y, z, rapto, true),
           conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
           conditional(P > 0, pOutput.format(P)),
