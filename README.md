@@ -28,4 +28,7 @@ Get rid of C0 (Polar stuff... (Hard))
 
 In G-Code end result export, make changes in description for better differentiating.
 
-Insert before CO/B0
+Insert before CO/B0 M109/M112 (Optional before tool).
+
+
+
