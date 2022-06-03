@@ -439,7 +439,6 @@ var machineState = {
 
 
 //Custom vars -AHF
-//var dealbreaker;
 
 function getCode(code, spindle) {
   switch (code) {
@@ -524,7 +523,7 @@ function getCode(code, spindle) {
     return 96;
   case "CONSTANT_SURFACE_SPEED_OFF":
     return 97;
-  case "LOCK_MULTI_AXIS":
+  case "LOCK_MULTI_AXIS": //here!!!
     return (spindle == SPINDLE_MAIN) ? 31 : 31;
   case "UNLOCK_MULTI_AXIS":
     return (spindle == SPINDLE_MAIN) ? 32 : 32;
@@ -845,7 +844,7 @@ function onOpen() {
           (tool.isTurningTool() ? localize("NR") + "=" + spatialFormat.format(tool.noseRadius) : localize("CR") + "=" + spatialFormat.format(tool.cornerRadius)) +
           (tool.taperAngle > 0 && (tool.taperAngle < Math.PI) ? " " + localize("TAPER") + "=" + taperFormat.format(tool.taperAngle) + localize("deg") : "") +
           (zRanges[tool.number] ? " - " + localize("ZMIN") + "=" + spatialFormat.format(zRanges[tool.number].getMinimum()) : "") +
-          " - " + localize(getToolTypeName(tool.type) + " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL" -AHF
+          " - " + localize(getToolTypeName(tool.type) + " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL " -AHF
         writeComment(comment);
       }
     }
@@ -3250,7 +3249,7 @@ function onCyclePoint(x, y, z) {
   // clamp the C-axis if necessary
   // the C-axis is automatically unclamped by the controllers during cycles
   var lockCode = "";
-  if (!machineState.axialCenterDrilling && !machineState.isTurningOperation) {
+  if (!machineState.axialCenterDrilling && !machineState.isTurningOperation && (getSpindle(true)!=SPINDLE_SUB)) {//Added && (getSpindle(true)!=SPINDLE_SUB) -AHF
     lockCode = mFormat.format(getCode("LOCK_MULTI_AXIS", getSpindle(true)));
   }
 
@@ -3659,11 +3658,15 @@ function onCommand(command) {
   case COMMAND_COOLANT_ON:
     setCoolant(COOLANT_FLOOD);
     break;
-  case COMMAND_LOCK_MULTI_AXIS:
-    writeBlock(cAxisBrakeModal.format(getCode("LOCK_MULTI_AXIS", getSpindle(true))));
+  case COMMAND_LOCK_MULTI_AXIS://Added if statement -AHF
+    if(getSpindle(true)!=SPINDLE_SUB){
+      writeBlock(cAxisBrakeModal.format(getCode("LOCK_MULTI_AXIS", getSpindle(true))));
+    }//come here
     break;
-  case COMMAND_UNLOCK_MULTI_AXIS:
-    writeBlock(cAxisBrakeModal.format(getCode("UNLOCK_MULTI_AXIS", getSpindle(true))));
+  case COMMAND_UNLOCK_MULTI_AXIS://Added if statement -AHF
+    if(getSpindle(true)!=SPINDLE_SUB){
+      writeBlock(cAxisBrakeModal.format(getCode("UNLOCK_MULTI_AXIS", getSpindle(true))));
+    }
     break;
   case COMMAND_START_CHIP_TRANSPORT:
     writeBlock(mFormat.format(00), formatComment("IESLEDZ SKAIDU KONVEIJERU"));
