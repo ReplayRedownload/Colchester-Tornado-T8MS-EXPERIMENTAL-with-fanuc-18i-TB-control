@@ -407,7 +407,7 @@ var forceSpindleSpeed = false;
 var activeMovements; // do not use by default
 var currentFeedId;
 var previousSpindle = SPINDLE_MAIN;
-var activeSpindle = SPINDLE_MAIN; //have a look -ahf
+var activeSpindle = SPINDLE_MAIN;
 var partCutoff = false;
 var transferType;
 var transferUseTorque;
@@ -436,9 +436,6 @@ var machineState = {
   axialCenterDrilling: undefined,
   currentBAxisOrientationTurning: new Vector(0, 0, 0)
 };
-
-
-//Custom vars -AHF
 
 function getCode(code, spindle) {
   switch (code) {
@@ -523,7 +520,7 @@ function getCode(code, spindle) {
     return 96;
   case "CONSTANT_SURFACE_SPEED_OFF":
     return 97;
-  case "LOCK_MULTI_AXIS": //here!!!
+  case "LOCK_MULTI_AXIS":
     return (spindle == SPINDLE_MAIN) ? 31 : 31;
   case "UNLOCK_MULTI_AXIS":
     return (spindle == SPINDLE_MAIN) ? 32 : 32;
@@ -1371,11 +1368,15 @@ function invertAxes(activate, polarMode) {
     xOutput = createVariable({prefix:"X"}, xFormat);
     yOutput = createVariable({onchange: function() {yAxisIsRetracted = false;}, prefix:"Y"}, yFormat);
     zOutput = createVariable({prefix:"Z"}, zFormat);
-    if(getSpindle(true)==SPINDLE_MAIN){//if statetement and else with result -AHF
+
+
+    if(getSpindle(true)==SPINDLE_MAIN){//Added if else statement to change when primary or secondary spindle is active -AHF
       cOutput = createVariable({prefix:"C"}, cFormat);
     }else{
       cOutput = createVariable({prefix:"B"}, cFormat);
     }
+
+
     iOutput = createReferenceVariable({prefix:"I", force:true}, spatialFormat);
     jOutput = createReferenceVariable({prefix:"J", force:true}, spatialFormat);
     kOutput = createReferenceVariable({prefix:"K", force:true}, spatialFormat);
@@ -1528,7 +1529,7 @@ function onSection() {
   
   // invert axes for secondary spindle
   if (getSpindle(true) == SPINDLE_SUB) {
-    invertAxes(true, true); // polar mode has not been enabled yet //hange (true, false) to (true, true) -AHF
+    invertAxes(true, true); // polar mode has not been enabled yet //Changed (true, false) to (true, true) to active polar mode -AHF
   }
 
   // activate Y-axis
@@ -1587,7 +1588,7 @@ function onSection() {
       var plane;
       switch (getMachiningDirection(currentSection)) {
       case MACHINING_DIRECTION_AXIAL:
-        plane = 18; //AFH changed getG17Code() to 18
+        plane = 18; //Changed getG17Code() to 18, so that all G17 will always become G18 -AHF
         break;
       case MACHINING_DIRECTION_RADIAL:
         plane = 19;
@@ -1608,11 +1609,12 @@ function onSection() {
       writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
       // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //comment this -AHF
   
+
       if (SPINDLE_MAIN==getSpindle(true)) {
         writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
       } else {
         writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //If sub spindle is active (it's working... somehow...) -AHF
-      }//LOOK HERE -AHF
+      }
 
 
       // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
@@ -2443,7 +2445,7 @@ function onLinear(_x, _y, _z, feed) {
       if (machineState.isTurningOperation) {
         writeBlock(gPlaneModal.format(18));
       } else if (isSameDirection(currentSection.workPlane.forward, new Vector(0, 0, 1))) {
-        writeBlock(gPlaneModal.format(18)); //AHF changed getG17Code() to 18
+        writeBlock(gPlaneModal.format(18)); //Changed getG17Code() to 18, so that all G17 will always become G18 -AHF
       } else if (Vector.dot(currentSection.workPlane.forward, new Vector(0, 0, 1)) < 1e-7) {
         writeBlock(gPlaneModal.format(19));
       } else {
@@ -2945,7 +2947,7 @@ function onCycle() {
       forceUnlockMultiAxis();
       // onCommand(COMMAND_UNLOCK_MULTI_AXIS);
       if (cycle.stopSpindle) {
-        writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); //looooooooooooooooooo
+        writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0));
         // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
       }
       gFeedModeModal.reset();
@@ -3253,7 +3255,7 @@ function onCyclePoint(x, y, z) {
   // clamp the C-axis if necessary
   // the C-axis is automatically unclamped by the controllers during cycles
   var lockCode = "";
-  if (!machineState.axialCenterDrilling && !machineState.isTurningOperation && (getSpindle(true)!=SPINDLE_SUB)) {//Added && (getSpindle(true)!=SPINDLE_SUB) -AHF
+  if (!machineState.axialCenterDrilling && !machineState.isTurningOperation && (getSpindle(true)!=SPINDLE_SUB)) {//Added && (getSpindle(true)!=SPINDLE_SUB), so M31 (maybe also M32, don't remember) will not appear when secondary spindle is active -AHF
     lockCode = mFormat.format(getCode("LOCK_MULTI_AXIS", getSpindle(true)));
   }
 
@@ -3284,7 +3286,7 @@ function onCyclePoint(x, y, z) {
         writeCycleClearance(plane, cycle.clearance);
         localZOutput.reset();
         writeBlock(
-          gCycleModal.format(plane == 19 ? 87.5 : 83), //Changed 83.5 to 83 -AHF
+          gCycleModal.format(plane == 19 ? 87.5 : 83), //Changed 83.5 to 83, it was changed, since the machine could not read 83.5 (I think...) -AHF
           getCommonCycle(x, y, z, rapto, true),
           conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
           conditional(P > 0, pOutput.format(P)),
@@ -3662,16 +3664,22 @@ function onCommand(command) {
   case COMMAND_COOLANT_ON:
     setCoolant(COOLANT_FLOOD);
     break;
-  case COMMAND_LOCK_MULTI_AXIS://Added if statement -AHF
+
+
+  case COMMAND_LOCK_MULTI_AXIS://Added if statement, so M31 does not appear when secondary spindle is active -AHF
     if(getSpindle(true)!=SPINDLE_SUB){
       writeBlock(cAxisBrakeModal.format(getCode("LOCK_MULTI_AXIS", getSpindle(true))));
     }//come here
     break;
-  case COMMAND_UNLOCK_MULTI_AXIS://Added if statement -AHF
+
+
+  case COMMAND_UNLOCK_MULTI_AXIS://Added if statement, so M32 does not appear when secondary spindle is active -AHF
     if(getSpindle(true)!=SPINDLE_SUB){
       writeBlock(cAxisBrakeModal.format(getCode("UNLOCK_MULTI_AXIS", getSpindle(true))));
     }
     break;
+
+
   case COMMAND_START_CHIP_TRANSPORT:
     writeBlock(mFormat.format(00), formatComment("IESLEDZ SKAIDU KONVEIJERU"));
     break;
@@ -3838,7 +3846,7 @@ function engagePartCatcher(engage) {
 function onSectionEnd() {
 
   if (machineState.usePolarMode) {
-    setPolarMode(true); // disable polar interpolation mode
+    setPolarMode(true); // disable polar interpolation mode //Changed (false) to (true) -AHF
   }
 
   // cancel SFM mode to preserve spindle speed
@@ -3931,7 +3939,7 @@ function onClose() {
     if (getSpindle()==SPINDLE_MAIN) {
       writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
     } else{
-      writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //It sub spindle is active (it's working... somehow...)... -AHF
+      writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //It sub spindle is active (it's working... somehow...) -AHF
     }//look
 
 
