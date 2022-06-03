@@ -1371,7 +1371,11 @@ function invertAxes(activate, polarMode) {
     xOutput = createVariable({prefix:"X"}, xFormat);
     yOutput = createVariable({onchange: function() {yAxisIsRetracted = false;}, prefix:"Y"}, yFormat);
     zOutput = createVariable({prefix:"Z"}, zFormat);
-    cOutput = createVariable({prefix:"C"}, cFormat);
+    if(getSpindle(true)==SPINDLE_MAIN){//if statetement and else with result -AHF
+      cOutput = createVariable({prefix:"C"}, cFormat);
+    }else{
+      cOutput = createVariable({prefix:"B"}, cFormat);
+    }
     iOutput = createReferenceVariable({prefix:"I", force:true}, spatialFormat);
     jOutput = createReferenceVariable({prefix:"J", force:true}, spatialFormat);
     kOutput = createReferenceVariable({prefix:"K", force:true}, spatialFormat);
