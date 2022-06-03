@@ -26,7 +26,7 @@ Removed M31 & M32 when secondary spindle is active (Works... (For now...**(Used 
 
 # Stuff to do:
 
-Get rid of those naked C0 with no dots next to it (C0. == keep, C0 == delete) (Polar stuff... (Hard))
+Get rid of those C0. (Polar stuff... (Hard))
 
 Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))
 
