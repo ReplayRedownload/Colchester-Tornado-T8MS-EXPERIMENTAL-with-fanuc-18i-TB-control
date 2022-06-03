@@ -1,3 +1,7 @@
+# SOURCE:
+
+https://cam.autodesk.com/posts/post.php?name=samsung%20mill-turn%20fanuc
+
 # Colchester-Tornado-T8MS-EXPERIMENTAL-with-fanuc-18i-TB-control
 
 Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Expect to have some bugs...)
