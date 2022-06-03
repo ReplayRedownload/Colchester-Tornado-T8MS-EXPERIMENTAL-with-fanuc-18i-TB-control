@@ -845,7 +845,7 @@ function onOpen() {
           (tool.isTurningTool() ? localize("NR") + "=" + spatialFormat.format(tool.noseRadius) : localize("CR") + "=" + spatialFormat.format(tool.cornerRadius)) +
           (tool.taperAngle > 0 && (tool.taperAngle < Math.PI) ? " " + localize("TAPER") + "=" + taperFormat.format(tool.taperAngle) + localize("deg") : "") +
           (zRanges[tool.number] ? " - " + localize("ZMIN") + "=" + spatialFormat.format(zRanges[tool.number].getMinimum()) : "") +
-          " - " + localize(getToolTypeName(tool.type));
+          " - " + localize(getToolTypeName(tool.type) + " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL"
         writeComment(comment);
       }
     }
