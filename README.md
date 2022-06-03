@@ -24,11 +24,10 @@ Changed G-Code export description for better differentiating (Only addeed a word
 
 Removed M31 & M32 when secondary spindle is active (Works... (For now...**(Used olny once)**))
 
-# Stuff to do:
+Make a certain character *cough*C0.*cough* to be the same when primary spindle active or become B0. when secondary spindle is active. (Works, but I doen't think it works 100% with the intent in mind (For now.. **(Used multiple times)**))
 
-Make a certain character *cough*C0.*cough* be the same when primary spindle active or become B0. when secondary spindle is active.
+# Stuff to do:
 
 Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))
 
-
-
+Insert A0 somewhere and when in the export part...(Need to clarify later...)
