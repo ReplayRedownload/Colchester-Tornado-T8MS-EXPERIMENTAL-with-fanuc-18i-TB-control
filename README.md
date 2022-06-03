@@ -26,7 +26,7 @@ Removed M31 & M32 when secondary spindle is active (Works... (For now...**(Used 
 
 # Stuff to do:
 
-Get rid of those C0. (Polar stuff... (Hard))
+Make a certain character *cough*C0.*cough* be the same when primary spindle active or become B0. when secondary spindle is active.
 
 Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))
 
