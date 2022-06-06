@@ -395,6 +395,7 @@ var POXY = 1;
 var POSZ = 2;
 var NEGZ = -2;
 
+
 var TRANSFER_PHASE = 0;
 var TRANSFER_SPEED = 1;
 var TRANSFER_STOP = 2;
@@ -408,6 +409,7 @@ var activeMovements; // do not use by default
 var currentFeedId;
 var previousSpindle = SPINDLE_MAIN;
 var activeSpindle = SPINDLE_MAIN;
+
 var partCutoff = false;
 var transferType;
 var transferUseTorque;
@@ -1153,6 +1155,10 @@ function setWorkPlane(abc) {
     conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z))
   );
 
+  if (getSpindle(true)==SPINDLE_SUB){
+    writeBlock("A0 (A-axis)");//Insert A0 if sub spindle is active -AHF
+  }
+
   onCommand(COMMAND_LOCK_MULTI_AXIS);
 
   currentWorkPlaneABC = abc;
@@ -1827,7 +1833,14 @@ function onSection() {
       if (gotBAxis) {
         bOutput.reset();
         writeBlock(gMotionModal.format(0), bOutput.format(getB(abc, currentSection)));
-        machineState.currentBAxisOrientationTurning = abc;
+
+
+        if (getSpindle(true)==SPINDLE_SUB){
+          writeBlock("A0 (A-axis)")//Insert A0 if sub spindle is active -AHF
+        }
+
+
+          machineState.currentBAxisOrientationTurning = abc;
       }
     } else if (!machineState.useXZCMode && !machineState.usePolarMode) {
       setWorkPlane(abc);
