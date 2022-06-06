@@ -439,6 +439,11 @@ var machineState = {
   currentBAxisOrientationTurning: new Vector(0, 0, 0)
 };
 
+
+//Custom vars -AHF
+var exist;
+
+
 function getCode(code, spindle) {
   switch (code) {
   case "PART_CATCHER_ON":
@@ -1156,7 +1161,7 @@ function setWorkPlane(abc) {
   );
 
   if (getSpindle(true)==SPINDLE_SUB){
-    writeBlock("A0 (A-axis)");//Insert A0 if sub spindle is active -AHF
+    writeBlock("A0 (A-axis)")//Insert A0 if sub spindle is active -AHF
   }
 
   onCommand(COMMAND_LOCK_MULTI_AXIS);
@@ -1615,13 +1620,19 @@ function onSection() {
       writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
       // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //comment this -AHF
   
+      var exist;
 
       if (SPINDLE_MAIN==getSpindle(true)) {
         writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
       } else {
         writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //If sub spindle is active (it's working... somehow...) -AHF
+        exist = true;
       }
 
+      
+      if(getSpindle(true)==SPINDLE_SUB && wcsOut=="G55" && exist!=true){
+        writeBlock("A0 (A-axis)")// Insert A0 if sub spindle is active and if G55 exists and if there is no previous A0 (It's a mess...) -AHF
+      }
 
       // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
       if (!machineState.usePolarMode && !machineState.useXZCMode && !currentSection.isMultiAxis()) {
@@ -1835,8 +1846,8 @@ function onSection() {
         writeBlock(gMotionModal.format(0), bOutput.format(getB(abc, currentSection)));
 
 
-        if (getSpindle(true)==SPINDLE_SUB){
-          writeBlock("A0 (A-axis)")//Insert A0 if sub spindle is active -AHF
+        if (getSpindle(true)==SPINDLE_SUB && wcsOut=="G55"){
+          writeBlock("A0 (A-axis)")//Insert A0 if sub spindle is active and if there is G55 -AHF
         }
 
 
