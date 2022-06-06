@@ -3096,7 +3096,7 @@ function onCycle() {
         writeBlock(
           gSpindleModeModal.format(spindleMode),
           sOutput.format(spindleSpeed),
-          mFormat.format(transferCodes.direction)
+          mFormat.format(3)//Changed transferCodes.direction to 3 -AHF
         );
       }
       // clean out chips
