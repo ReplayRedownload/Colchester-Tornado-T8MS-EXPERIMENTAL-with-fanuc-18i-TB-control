@@ -10,7 +10,7 @@ Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Ex
 <p>G98 => G94 (Works...)</p>
 <p>G17 => G18 (Works...)</p>
 <p>G83.5 => G83 (Works...)</p>
-<p>Polar stuff... is forced and not working 100%... (You will have to manually add G13.1 stuff like that)</p>
+<p>Polar stuff... is forced and not working 100%... (You will have to manually add G13.1 and stuff like that)</p>
 <p>Changed H0. (Primary spindle incremental adress) => C0. (When primary spindle is active, but there won't be any H0.) OR B0. (When secondary spindle is active, but there won't be any H0.)(Works...)</p>
 <p>Changed G-Code export description for better differentiating (Only addeed a word...)</p>
 </p>Removed M31 & M32 when secondary spindle is active (Works...)</p>
