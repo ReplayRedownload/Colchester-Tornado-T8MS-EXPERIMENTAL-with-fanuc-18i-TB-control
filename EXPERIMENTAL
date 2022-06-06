@@ -3012,7 +3012,7 @@ function onCycle() {
         writeBlock(
           conditional(cycle.useMachineFrame == 1, gFormat.format(53)),
           gMotionModal.format(1),
-          barOutput.format(cycle.feedPosition),//over here
+          barOutput.format(cycle.feedPosition),
           getFeed(cycle.feedrate),
           formatComment("BAR PULL")
         );
@@ -3967,7 +3967,7 @@ function onClose() {
       writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
     } else{
       writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //It sub spindle is active (it's working... somehow...) -AHF
-    }//look
+    }
 
 
     // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
