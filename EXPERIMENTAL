@@ -3855,6 +3855,7 @@ function ejectPart() {
   }
   writeBlock(mFormat.format(getCode("STOP_SPINDLE", getSpindle(true))));
   setCoolant(COOLANT_OFF);
+  retractSubSpindle();
   writeComment(localize("END OF PART EJECT"));
   writeln("");
 }
