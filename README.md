@@ -24,11 +24,12 @@
 <p>Added Sub spindle retun AND Return to ABS PR in Part Eject end.<p>
 <p>Added G94 in eject part<p>
 <p>G54 => G55 in Eject Part<p>
-  
+<P>G17 => G18 in Eject Part<p>
+
 # Stuff to do:
 <p>Part eject:<p> 
-<P>Line1:G17 => G18<p>
 <p>Line2:Add G00 A0 <p>
+    
 <p>Check if Optional Stop(M01)(Fusion360) is working as intended<p>
 <p>Check if Stop(M02)(Fusion360) is working as intended<p>
 
