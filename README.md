@@ -21,6 +21,15 @@ Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Ex
 <p>Moved M05, M105 below M116 (Cancel synchronization)<p>
   
 # Stuff to do:
+<p>Part eject:<p> 
+<p>Line1:G54 => G55<p>
+<P>Line1:G17 => G18<p>
+<p>Line1:Add G94<p>
+<p>Line2:Add G00 A0 <p>
+<p>EndLine:Add Sub spindle retun AND Return to ABS PR<p>
+<p>Check if Optional Stop(M01)(Fusion360) is working as intended<p>
+<p>Check if Stop(M02)(Fusion360) is working as intended<p>
+
   
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
