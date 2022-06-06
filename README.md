@@ -1,6 +1,8 @@
 # Colchester-Tornado-T8MS-EXPERIMENTAL-with-fanuc-18i-TB-control
 
-Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Expect to have some bugs...)
+<p>Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Expect to have some bugs...)<p>
+<p>In the EXPERIMENTAL file has also comments<p>
+<p>Example: //Changed something bla bla bla -AHF<p>
 
 # SOURCE:
 <p>https://cam.autodesk.com/posts/post.php?name=samsung%20mill-turn%20fanuc</p>
@@ -20,12 +22,12 @@ Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Ex
 <p>In subspindle grab removed(commented) unwated code (Torque skip on/off & G31 P98)<p>
 <p>Moved M05, M105 below M116 (Cancel synchronization)<p>
 <p>Added Sub spindle retun AND Return to ABS PR in Part Eject end.<p>
+<p>Added G94 in eject part<p>
 
 # Stuff to do:
 <p>Part eject:<p> 
 <p>Line1:G54 => G55<p>
 <P>Line1:G17 => G18<p>
-<p>Line1:Add G94<p>
 <p>Line2:Add G00 A0 <p>
 <p>Check if Optional Stop(M01)(Fusion360) is working as intended<p>
 <p>Check if Stop(M02)(Fusion360) is working as intended<p>
