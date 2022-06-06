@@ -18,6 +18,7 @@ Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Ex
 </p>Insert A0 after G55 and G00 when secondary spindle is active (Works...).<p>
 
 # Stuff to do:
-
+In secondary spindle grab and return remove not needed values and reorganize the M-Code export process and find information what created A2.5.
+  
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
