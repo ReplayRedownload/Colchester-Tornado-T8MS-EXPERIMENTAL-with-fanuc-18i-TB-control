@@ -18,11 +18,6 @@ Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Ex
 </p>Insert A0 after G55 and G00 when secondary spindle is active.<p>
 
 # Stuff to do:
-<p>Insert A0 after G54-G59 and when secondary spindle is active if possible add it after G0.</p>
-<p>Example:</p>
-<p>G55 (SUB)</p>
-<p>G0 (optional)</p>
-<p>A0</p>
 
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
