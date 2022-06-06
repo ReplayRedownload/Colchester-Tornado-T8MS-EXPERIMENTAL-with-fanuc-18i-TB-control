@@ -3825,6 +3825,7 @@ function ejectPart() {
     gFeedModeModal.format(getCode("FEED_MODE_MM_MIN", getSpindle(false))),
     gFormat.format(53 + currentWorkOffset),
     gPlaneModal.format(getG17Code()),
+    gFormat.format(getCode("FEED_MODE_MM_MIN")),//Added G94 -AHF
     cAxisEngageModal.format(getCode("DISABLE_C_AXIS", getSpindle(true)))
   );
   setCoolant(COOLANT_THROUGH_TOOL);
