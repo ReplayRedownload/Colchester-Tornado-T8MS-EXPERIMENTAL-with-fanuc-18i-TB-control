@@ -3024,14 +3024,17 @@ function onCycle() {
           writeBlock(mFormat.format(getCode("UNCLAMP_CHUCK", getSecondarySpindle())), formatComment("UNCLAMP SUB CHUCK"));
           onDwell(cycle.dwell);
         }
-        onCommand(COMMAND_STOP_SPINDLE);
-        writeBlock(mFormat.format(getCode("STOP_SPINDLE", getSecondarySpindle())));
+
         if ((transferCodes != undefined) && !transferCodes.cutoff) {
-          writeBlock(mFormat.format(getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true))), formatComment("CANCEL SYNCHRONIZATION"));
+          writeBlock(mFormat.format(getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true))), formatComment("CANCEL SYNCHRONIZATION") + " (HALLO)");//over hre
         } else {
           var code = getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true));
           writeBlock(mFormat.format(code), formatComment("CANCEL SYNCHRONIZATION"));
         }
+
+        onCommand(COMMAND_STOP_SPINDLE);//Moved this below the if else statement, the one above ^ -AHF
+        writeBlock(mFormat.format(getCode("STOP_SPINDLE", getSecondarySpindle())));//Moved this below the if else statement, the one above ^ -AHF
+
         retractSubSpindle();
       } else {
         writeBlock(mFormat.format(getCode("CLAMP_CHUCK", getSpindle(true))), formatComment("CLAMP MAIN CHUCK"));
