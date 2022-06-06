@@ -8,7 +8,7 @@ Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Ex
 # Changes:
 <p>G99 => G95 (Works...)</p>
 <p>G98 => G94 (Works...)</p>
-<p>G17 => G18 (Works...)</p>
+<p>G17 => G18 (Not 100%, confirmed)</p>
 <p>G83.5 => G83 (Works...)</p>
 <p>M00 => M03 (Works...)<p>
 <p>Polar stuff... is forced and not working 100%... (You will have to manually add G13.1 and stuff like that)</p>
@@ -19,7 +19,7 @@ Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Ex
 <p>Insert A0 after G55 and G00 when secondary spindle is active (Works...).<p>
 <p>In subspindle grab removed(commented) unwated code (Torque skip on/off & G31 P98)<p>
 <p>Moved M05, M105 below M116 (Cancel synchronization)<p>
-<p>Added Sub spindle retun AND Return to ABS PR in Part Eject<p>
+<p>Added Sub spindle retun AND Return to ABS PR in Part Eject end.<p>
 
 # Stuff to do:
 <p>Part eject:<p> 
