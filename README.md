@@ -27,8 +27,7 @@
 <P>G17 => G18 in Eject Part<p>
 
 # Stuff to do:
-<p>Part eject:<p> 
-<p>Line2:Add G00 A0 <p>
+<p>Part eject:Add G00 A0 <p>
     
 <p>Check if Optional Stop(M01)(Fusion360) is working as intended<p>
 <p>Check if Stop(M02)(Fusion360) is working as intended<p>
