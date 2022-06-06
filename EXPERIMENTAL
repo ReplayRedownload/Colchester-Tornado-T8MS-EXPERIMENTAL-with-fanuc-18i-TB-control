@@ -3012,7 +3012,7 @@ function onCycle() {
         writeBlock(
           conditional(cycle.useMachineFrame == 1, gFormat.format(53)),
           gMotionModal.format(1),
-          barOutput.format(cycle.feedPosition),
+          barOutput.format(cycle.feedPosition),//over here
           getFeed(cycle.feedrate),
           formatComment("BAR PULL")
         );
@@ -3026,7 +3026,7 @@ function onCycle() {
         }
 
         if ((transferCodes != undefined) && !transferCodes.cutoff) {
-          writeBlock(mFormat.format(getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true))), formatComment("CANCEL SYNCHRONIZATION") + " (HALLO)");//over hre
+          writeBlock(mFormat.format(getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true))), formatComment("CANCEL SYNCHRONIZATION"));
         } else {
           var code = getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true));
           writeBlock(mFormat.format(code), formatComment("CANCEL SYNCHRONIZATION"));
