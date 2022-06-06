@@ -1618,9 +1618,9 @@ function onSection() {
       // writeBlock(wcsOut, mFormat.format(getCode("SET_SPINDLE_FRAME", getSpindle(true))));
       writeBlock(wcsOut);
       writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
-      // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //comment this -AHF
+      // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //Commented -AHF
   
-      var exist;
+      var exist;//Added a custom var -AHF
 
       if (SPINDLE_MAIN==getSpindle(true)) {
         writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
@@ -2195,7 +2195,7 @@ function goHome(forceY) {
 
 function retractSubSpindle() {
   if (getProperty("useG28")) {
-    writeBlock(gMotionModal.format(0), gFormat.format(28), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));
+    writeBlock(gFormat.format(0), gFormat.format(28), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));//Changed gMotionModal.format(0) to gFormat(0) -AHF
     writeBlock(gMotionModal.format(0), gFormat.format(90),  formatComment("RETURN TO ABS PR"));
   } else {
     writeBlock(gMotionModal.format(0), gFormat.format(53), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));
@@ -3113,17 +3113,17 @@ function onCycle() {
       writeBlock(gMotionModal.format(0), conditional(cycle.useMachineFrame == 1, gFormat.format(53)), barOutput.format(cycle.feedPosition));
             
       // if (transferUseTorque) {
-      //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_ON", getSpindle(true))), formatComment("TORQUE SKIP ON"));//Comment this -AHF
+      //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_ON", getSpindle(true))), formatComment("TORQUE SKIP ON"));//Commented -AHF
       // }
       writeBlock(
         gMotionModal.format(1),
         conditional(cycle.useMachineFrame == 1, gFormat.format(53)),
-        //gFeedModeModal.format(98), gFormat.format(31), "P98", //Comment this -AHF
+        //gFeedModeModal.format(98), gFormat.format(31), "P98", //Commented -AHF
         barOutput.format(cycle.chuckPosition),
         getFeed(cycle.feedrate)
       );
       // if (transferUseTorque) {
-      //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_OFF", getSpindle(true))), formatComment("TORQUE SKIP OFF"));//Comment this -AHF
+      //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_OFF", getSpindle(true))), formatComment("TORQUE SKIP OFF"));//Commented -AHF
       // }
       writeBlock(mFormat.format(getCode("CLAMP_CHUCK", getSecondarySpindle())), formatComment("CLAMP SUB SPINDLE"));
       // writeBlock(mFormat.format(getCode("INTERLOCK_BYPASS", getSpindle(true))), formatComment("INTERLOCK BYPASS"));
@@ -3824,7 +3824,8 @@ function ejectPart() {
   writeBlock(
     gFeedModeModal.format(getCode("FEED_MODE_MM_MIN", getSpindle(false))),
     gFormat.format(53 + currentWorkOffset + 1), //Added +1, so to make it G55 -AHF
-    gPlaneModal.format(getG17Code()),
+    gFormat.format(18),//Added G18 -AHF
+    // gPlaneModal.format(getG17Code()),//Commented -AHF
     gFormat.format(getCode("FEED_MODE_MM_MIN")),//Added G94 -AHF
     cAxisEngageModal.format(getCode("DISABLE_C_AXIS", getSpindle(true)))
   );
@@ -3962,7 +3963,7 @@ function onClose() {
   }
   if (liveTool) {
     writeBlock(cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
-    // writeBlock(gFormat.format(28), "H" + abcFormat.format(0)); // unwind //comment this -AHF  
+    // writeBlock(gFormat.format(28), "H" + abcFormat.format(0)); // unwind //Commented -AHF  
 
 
     if (getSpindle()==SPINDLE_MAIN) {
