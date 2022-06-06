@@ -1161,7 +1161,7 @@ function setWorkPlane(abc) {
   );
 
   if (getSpindle(true)==SPINDLE_SUB){
-    writeBlock("A0 (A-axis)")//Insert A0 if sub spindle is active -AHF
+    writeBlock("A0 (A AXIS TO WORK ZERO)")//Insert A0 if sub spindle is active -AHF
   }
 
   onCommand(COMMAND_LOCK_MULTI_AXIS);
@@ -1631,7 +1631,7 @@ function onSection() {
 
       
       if(getSpindle(true)==SPINDLE_SUB && wcsOut=="G55" && exist!=true){
-        writeBlock("A0 (A-axis)")// Insert A0 if sub spindle is active and if G55 exists and if there is no previous A0 (It's a mess...) -AHF
+        writeBlock("A0 (A AXIS TO WORK ZERO)")// Insert A0 if sub spindle is active and if G55 exists and if there is no previous A0 (It's a mess...) -AHF
       }
 
       // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
@@ -1847,7 +1847,7 @@ function onSection() {
 
 
         if (getSpindle(true)==SPINDLE_SUB && wcsOut=="G55"){
-          writeBlock("A0 (A-axis)")//Insert A0 if sub spindle is active and if there is G55 -AHF
+          writeBlock("A0 (A AXIS TO WORK ZERO)")//Insert A0 if sub spindle is active and if there is G55 -AHF
         }
 
 
@@ -3109,19 +3109,19 @@ function onCycle() {
       gMotionModal.reset();
       writeBlock(gMotionModal.format(0), conditional(cycle.useMachineFrame == 1, gFormat.format(53)), barOutput.format(cycle.feedPosition));
             
-      if (transferUseTorque) {
-        writeBlock(mFormat.format(getCode("TORQUE_SKIP_ON", getSpindle(true))), formatComment("TORQUE SKIP ON"));
-      }
+      // if (transferUseTorque) {
+      //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_ON", getSpindle(true))), formatComment("TORQUE SKIP ON"));//Comment this -AHF
+      // }
       writeBlock(
         gMotionModal.format(1),
         conditional(cycle.useMachineFrame == 1, gFormat.format(53)),
-        gFeedModeModal.format(98), gFormat.format(31), "P98",
+        //gFeedModeModal.format(98), gFormat.format(31), "P98", //Comment this -AHF
         barOutput.format(cycle.chuckPosition),
         getFeed(cycle.feedrate)
       );
-      if (transferUseTorque) {
-        writeBlock(mFormat.format(getCode("TORQUE_SKIP_OFF", getSpindle(true))), formatComment("TORQUE SKIP OFF"));
-      }
+      // if (transferUseTorque) {
+      //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_OFF", getSpindle(true))), formatComment("TORQUE SKIP OFF"));//Comment this -AHF
+      // }
       writeBlock(mFormat.format(getCode("CLAMP_CHUCK", getSecondarySpindle())), formatComment("CLAMP SUB SPINDLE"));
       // writeBlock(mFormat.format(getCode("INTERLOCK_BYPASS", getSpindle(true))), formatComment("INTERLOCK BYPASS"));
       
