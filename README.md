@@ -20,7 +20,7 @@ Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Ex
 <p>Moved M05, M105 below M116 (Cancel synchronization)<p>
 
 # Stuff to do:
-<p>M00=>M03/M04<p>
+<p> M00=> M03/M04<p>
   
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
