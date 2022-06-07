@@ -3822,11 +3822,10 @@ function ejectPart() {
     cAxisEngageModal.reset();
   }
   writeBlock(
-    gFeedModeModal.format(getCode("FEED_MODE_MM_MIN", getSpindle(false))),
     gFormat.format(53 + currentWorkOffset + 1), //Added +1, so to make it G55 -AHF
+    gFeedModeModal.format(getCode("FEED_MODE_MM_MIN", getSpindle(false))),//Moved it 1 line below -AHF
     gFormat.format(18),//Added G18 -AHF
     // gPlaneModal.format(getG17Code()),//Commented -AHF
-    gFormat.format(getCode("FEED_MODE_MM_MIN")),//Added G94 -AHF
     cAxisEngageModal.format(getCode("DISABLE_C_AXIS", getSpindle(true)))
   );
   setCoolant(COOLANT_THROUGH_TOOL);
@@ -3839,7 +3838,11 @@ function ejectPart() {
   // writeBlock(mFormat.format(getCode("INTERLOCK_BYPASS", getSpindle(true))));
   if (getProperty("gotPartCatcher")) {
     writeBlock(mFormat.format(getCode("PART_CATCHER_ON", getSpindle(true))));
+
+
     writeBlock("G00 A0.");//Added this line in this if statement -AHF
+
+
   }
   writeBlock(mFormat.format(getCode("UNCLAMP_CHUCK", getSpindle(true))));
   onDwell(1.5);
