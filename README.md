@@ -29,7 +29,7 @@
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
     
 # Stuff to do:    
-<p>Correct coordinates output<p>
+<p>Correct coordinates output (It feels like for every step forward I take two steps back)<p>
     
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
