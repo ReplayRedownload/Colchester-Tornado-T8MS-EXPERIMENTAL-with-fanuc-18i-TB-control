@@ -28,8 +28,6 @@
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
     
 # Stuff to do:    
-<p>Check if Stop(M02)(Fusion360) is working as intended<p>
-
   
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
