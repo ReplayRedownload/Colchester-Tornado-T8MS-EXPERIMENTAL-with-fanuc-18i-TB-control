@@ -1877,8 +1877,7 @@ function onSection() {
         conditional(machineState.useXZCMode, cOutput.format(getC(initialPosition.x, initialPosition.y)))
       );
     } else {
-      writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z));//over here woohoo
-      initialPosition.x=initialPosition.z;//Added this line -AHF
+      writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z));//look here. maybe
       writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y)));
     }
   }
