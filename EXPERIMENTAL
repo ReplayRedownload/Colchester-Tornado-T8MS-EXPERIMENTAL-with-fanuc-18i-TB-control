@@ -1877,7 +1877,8 @@ function onSection() {
         conditional(machineState.useXZCMode, cOutput.format(getC(initialPosition.x, initialPosition.y)))
       );
     } else {
-      writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z));
+      writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z));//over here woohoo
+      initialPosition.x=initialPosition.z;//Added this line -AHF
       writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y)));
     }
   }
@@ -3300,7 +3301,7 @@ function onCyclePoint(x, y, z) {
     case "drilling":
     case "counter-boring":
       x=z; //Assigned z value to x
-      counterboring = true;
+      counterboring = true;//Added and Assigned to custom var value true
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
       writeBlock(
