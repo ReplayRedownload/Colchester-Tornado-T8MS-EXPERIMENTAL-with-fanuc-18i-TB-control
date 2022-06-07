@@ -442,7 +442,7 @@ var machineState = {
 
 //Custom vars -AHF
 var exist;
-
+var counterboring;
 
 function getCode(code, spindle) {
   switch (code) {
@@ -1518,7 +1518,7 @@ function onSection() {
     if (getProperty("optionalStop")) {
       onCommand(COMMAND_OPTIONAL_STOP);
       gMotionModal.reset();
-l    }
+    }
   }
   // Consider part cutoff as stockTransfer operation
   if (!(stockTransferIsActive && partCutoff)) {
@@ -3153,6 +3153,9 @@ function getCommonCycle(x, y, z, r, includeRcode) {
     return [xOutput.format(getModulus(x, y)), cOutput.format(getCClosest(x, y, cOutput.getCurrent())),
       zOutput.format(z),
       raptoS];
+  } else if (counterboring==true){
+    return [xOutput.format(x), yOutput.format(y),
+      raptoS];
   } else {
     return [xOutput.format(x), yOutput.format(y),
       zOutput.format(z),
@@ -3296,11 +3299,13 @@ function onCyclePoint(x, y, z) {
     switch (cycleType) {
     case "drilling":
     case "counter-boring":
+      x=z; //Assigned z value to x
+      counterboring = true;
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
       writeBlock(
         gCycleModal.format(plane == 19 ? 87 : 83),//over here
-        getCommonCycle(x, y, z*2, rapto, true),//Changed z to z*2 -AHF
+        getCommonCycle(x, y, z, rapto, true),
         conditional(P > 0, pOutput.format(P)),
         feedOutput.format(F),
         lockCode
