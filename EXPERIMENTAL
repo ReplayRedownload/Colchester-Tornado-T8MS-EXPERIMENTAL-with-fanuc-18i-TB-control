@@ -1518,7 +1518,7 @@ function onSection() {
     if (getProperty("optionalStop")) {
       onCommand(COMMAND_OPTIONAL_STOP);
       gMotionModal.reset();
-    }
+l    }
   }
   // Consider part cutoff as stockTransfer operation
   if (!(stockTransferIsActive && partCutoff)) {
@@ -1602,7 +1602,7 @@ function onSection() {
         plane = 18; //Changed getG17Code() to 18, so that all G17 will always become G18 -AHF
         break;
       case MACHINING_DIRECTION_RADIAL:
-        plane = 19;
+        plane = 18;
         break;
       case MACHINING_DIRECTION_INDEXING:
         plane = getG17Code();
@@ -3299,8 +3299,8 @@ function onCyclePoint(x, y, z) {
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
       writeBlock(
-        gCycleModal.format(plane == 19 ? 87 : 83),
-        getCommonCycle(x, y, z, rapto, true),
+        gCycleModal.format(plane == 19 ? 87 : 83),//over here
+        getCommonCycle(x, y, z*2, rapto, true),//Changed z to z*2 -AHF
         conditional(P > 0, pOutput.format(P)),
         feedOutput.format(F),
         lockCode
@@ -3696,7 +3696,7 @@ function onCommand(command) {
   case COMMAND_LOCK_MULTI_AXIS://Added if statement, so M31 does not appear when secondary spindle is active -AHF
     if(getSpindle(true)!=SPINDLE_SUB){
       writeBlock(cAxisBrakeModal.format(getCode("LOCK_MULTI_AXIS", getSpindle(true))));
-    }//come here
+    }
     break;
 
 
