@@ -11,6 +11,7 @@
 <p>G99 => G95</p>
 <p>G98 => G94</p>
 <p>G17 => G18</p>
+<p>G19 => G18<p>
 <p>G83.5 => G83</p>
 <p>M00 => M03<p>
 <p>Polar stuff... is forced and not working 100%... (You will have to manually add G13.1 and stuff like that)</p>
@@ -28,7 +29,6 @@
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
     
 # Stuff to do:    
-<p>G19 => G18<p>
 <p>Correct coordinates output<p>
     
 # I'm not sure if I need to do this...
