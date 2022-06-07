@@ -3839,6 +3839,7 @@ function ejectPart() {
   // writeBlock(mFormat.format(getCode("INTERLOCK_BYPASS", getSpindle(true))));
   if (getProperty("gotPartCatcher")) {
     writeBlock(mFormat.format(getCode("PART_CATCHER_ON", getSpindle(true))));
+    writeBlock("G00 A0.");//Added this line in this if statement -AHF
   }
   writeBlock(mFormat.format(getCode("UNCLAMP_CHUCK", getSpindle(true))));
   onDwell(1.5);
