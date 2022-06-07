@@ -3823,8 +3823,8 @@ function ejectPart() {
   }
   writeBlock(
     gFormat.format(53 + currentWorkOffset + 1), //Added +1, so to make it G55 -AHF
-    gFeedModeModal.format(getCode("FEED_MODE_MM_MIN", getSpindle(false))),//Moved it 1 line below -AHF
     gFormat.format(18),//Added G18 -AHF
+    gFeedModeModal.format(getCode("FEED_MODE_MM_MIN", getSpindle(false))),//Moved it 2 lines below -AHF
     // gPlaneModal.format(getG17Code()),//Commented -AHF
     cAxisEngageModal.format(getCode("DISABLE_C_AXIS", getSpindle(true)))
   );
