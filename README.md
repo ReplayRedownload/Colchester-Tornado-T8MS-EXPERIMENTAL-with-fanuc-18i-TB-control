@@ -28,8 +28,8 @@
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
     
 # Stuff to do:    
-<p>Optional Stop(M01) move it to the end of the operation<p>
-<p>Stop(M02) move it to the end of the operation<p>
+<p>G19 => G18<p>
+<p>Correct coordinates output<p>
     
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
