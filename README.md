@@ -25,10 +25,9 @@
 <p>Added G94 in eject part<p>
 <p>G54 => G55 in Eject Part<p>
 <P>G17 => G18 in Eject Part<p>
-
-# Stuff to do:
-<p>Part eject:Add G00 A0 <p>
+<p>Added G00 A0 in a if statemeent in Eject Part<p>
     
+# Stuff to do:    
 <p>Check if Optional Stop(M01)(Fusion360) is working as intended<p>
 <p>Check if Stop(M02)(Fusion360) is working as intended<p>
 
