@@ -443,6 +443,9 @@ var machineState = {
 //Custom vars -AHF
 var exist;
 var counterboring;
+var saveX;
+var saveZ;
+var alternative;
 
 function getCode(code, spindle) {
   switch (code) {
@@ -1835,7 +1838,7 @@ function onSection() {
   gMotionModal.reset();
 
   if (currentSection.isMultiAxis()) {
-    writeBlock(gMotionModal.format(0), aOutput.format(abc.x), bOutput.format(abc.y), cOutput.format(abc.z));
+    writeBlock(gMotionModal.format(0), aOutput.format(abc.x), bOutput.format(abc.y), cOutput.format(abc.z)+ "SSSSSSSSSSSSSSS");
     previousABC = abc;
     forceWorkPlane();
     cancelTransformation();
@@ -1877,10 +1880,18 @@ function onSection() {
         conditional(machineState.useXZCMode, cOutput.format(getC(initialPosition.x, initialPosition.y)))
       );
     } else {
-      writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z));//look here. maybe
-      writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y)));
+        savex=initialPosition.x;
+        saveZ=initialPosition.z
+        if(exist!=true){
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)+ " (VALUE1)");
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (VALUE2)");
+        } else {
+          // initialPosition.z=saveX;
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)+ " (DIF VALUE1)");
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.z), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (DIF VALUE2)");
+        }
+      }
     }
-  }
 
   // enable SFM spindle speed
   if (tool.getSpindleMode() == SPINDLE_CONSTANT_SURFACE_SPEED) {
@@ -2310,12 +2321,16 @@ function onRapid(_x, _y, _z) {
         writeBlock(gMotionModal.format(1), x, y, z, getFeed(highFeed));
         resetFeed = false;
       } else {
-        writeBlock(gMotionModal.format(0), x, y, z);
-        // forceFeed();
+        //if(alternative==true){//Added a if else statement -AHF
+          //writeBlock(gMotionModal.format(0), y, xOutput.format(saveZ));//Alternative -AHF
+        //} else {
+          writeBlock(gMotionModal.format(0), x, y, z +" (VALUE3)");//Original -AHF
+          forceFeed();
+        }
       }
     }
   }
-}
+//}
 
 /** Calculate the distance of a point to a line segment. */
 function pointLineDistance(startPt, endPt, testPt) {
@@ -3299,12 +3314,12 @@ function onCyclePoint(x, y, z) {
     switch (cycleType) {
     case "drilling":
     case "counter-boring":
-      x=z; //Assigned z value to x
-      counterboring = true;//Added and Assigned to custom var value true
+      x=z; //Assigned z value to x -AHF
+      counterboring = true;//Added and Assigned to custom var value true -AHF
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
       writeBlock(
-        gCycleModal.format(plane == 19 ? 87 : 83),//over here
+        gCycleModal.format(plane == 19 ? 87 : 83),
         getCommonCycle(x, y, z, rapto, true),
         conditional(P > 0, pOutput.format(P)),
         feedOutput.format(F),
@@ -3318,7 +3333,7 @@ function onCyclePoint(x, y, z) {
         writeCycleClearance(plane, cycle.clearance);
         localZOutput.reset();
         writeBlock(
-          gCycleModal.format(plane == 19 ? 87.5 : 83), //Changed 83.5 to 83, it was changed, since the machine could not read 83.5 (I think...) -AHF
+          gCycleModal.format(plane == 19 ? 87 : 83), //Changed 83.5 to 83, it was changed, since the machine could not read 83.5 (I think...) -AHF
           getCommonCycle(x, y, z, rapto, true),
           conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
           conditional(P > 0, pOutput.format(P)),
@@ -3331,7 +3346,7 @@ function onCyclePoint(x, y, z) {
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
       writeBlock(
-        gCycleModal.format(plane == 19 ? 87.6 : 83.6),
+        gCycleModal.format(plane == 19 ? 87 : 83),
         getCommonCycle(x, y, z, rapto, true),
         conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
         conditional(P > 0, pOutput.format(P)),
@@ -3989,6 +4004,7 @@ function onClose() {
       writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
     } else{
       writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //It sub spindle is active (it's working... somehow...) -AHF
+      
     }
 
 
