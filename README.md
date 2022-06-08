@@ -31,7 +31,7 @@
 <p>Corrected coordinates output<p>
 
 # Stuff to do:    
-<p>Check if thread is wroking as intented, something about G76<p>
+<p>Check if thread is working as intented, something about G76<p>
 <p>Add B0(SUB) or C0(MAIN) after next A0(Comment...)to help the machine find its axis<p>
     
 # I'm not sure if I need to do this...
