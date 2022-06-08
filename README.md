@@ -30,6 +30,7 @@
     
 # Stuff to do:    
 <p>Correct coordinates output (It feels like for every step forward I take two steps back)<p>
+<p>Check if thread is wroking as intented, something about G76<p>
     
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
