@@ -29,7 +29,7 @@
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
     
 # Stuff to do:    
-<p>Correct coordinates output (It feels like for every step forward I take two steps back)<p>
+<p>Correct coordinates output (Making some progress)<p>
 <p>Check if thread is wroking as intented, something about G76<p>
     
 # I'm not sure if I need to do this...
