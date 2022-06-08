@@ -1623,8 +1623,7 @@ function onSection() {
       writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
       // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //Commented -AHF
   
-      var exist;//Added a custom var -AHF
-
+      
       if (SPINDLE_MAIN==getSpindle(true)) {
         writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
       } else {
@@ -1880,15 +1879,17 @@ function onSection() {
         conditional(machineState.useXZCMode, cOutput.format(getC(initialPosition.x, initialPosition.y)))
       );
     } else {
-        savex=initialPosition.x;
-        saveZ=initialPosition.z
-        if(exist!=true){
-          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)+ " (VALUE1)");
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (VALUE2)");
+        if(exist!=true){//Added if else statement so coordinates change places when needed -AHF
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/*+ " (VALUE1)"*/);//OG, Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/*+ " (VALUE2)"*/);//OG ,Uncomment when needed -AHF
         } else {
-          // initialPosition.z=saveX;
-          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)+ " (DIF VALUE1)");
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.z), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (DIF VALUE2)");
+          if (getCode("START_SPINDLE_CW",getSpindle(false))==3){//Added if else statemend so certain coordinates changed places -AHF
+            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)/*+ " (DIF1 VALUE1)"*/);//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.z), conditional(gotYAxis, yOutput.format(initialPosition.y))/*+ " (DIF1 VALUE2)"*/);//Uncomment when needed -AHF
+          } else {
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/*+ " (DIF2 VALUE1)"*/);//Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/*+ " (DIF2 VALUE2)"*/);//Uncomment when needed -AHF
+          }
         }
       }
     }
@@ -2321,11 +2322,12 @@ function onRapid(_x, _y, _z) {
         writeBlock(gMotionModal.format(1), x, y, z, getFeed(highFeed));
         resetFeed = false;
       } else {
-        //if(alternative==true){//Added a if else statement -AHF
-          //writeBlock(gMotionModal.format(0), y, xOutput.format(saveZ));//Alternative -AHF
-        //} else {
-          writeBlock(gMotionModal.format(0), x, y, z +" (VALUE3)");//Original -AHF
-          forceFeed();
+          if(exist!=true){
+            writeBlock(gMotionModal.format(0), x, y, z +" (VALUE3)");//OG, Uncomment when needed -AHF
+            // forceFeed();
+          } else {
+            writeBlock(gMotionModal.format(0), x, y, z +" (DIF VALUE3)");//OG, Uncomment when needed -AHF
+          }
         }
       }
     }
