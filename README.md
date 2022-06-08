@@ -3,7 +3,7 @@
 <p>Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Expect to have some bugs...)<p>
 <p>In the EXPERIMENTAL file has also comments<p>
 <p>Example: //Changed something bla bla bla -AHF<p>
-
+<p>You will easily find the differences in the code if you use Visual Studio Code or something else to compare with the one on the internet.<p>
 # SOURCE:
 <p>https://cam.autodesk.com/posts/post.php?name=samsung%20mill-turn%20fanuc</p>
 
@@ -27,9 +27,9 @@
 <p>G54 => G55 in Eject Part<p>
 <P>G17 => G18 in Eject Part<p>
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
-    
+<p>Corrected coordinates output<p>
+
 # Stuff to do:    
-<p>Correct coordinates output (Making some progress)<p>
 <p>Check if thread is wroking as intented, something about G76<p>
 <p>Add B0(SUB) or C0(MAIN) after next A0(Comment...)to help the machine find its axis<p>
     
