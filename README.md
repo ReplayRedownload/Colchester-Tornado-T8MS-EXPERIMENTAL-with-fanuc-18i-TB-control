@@ -31,7 +31,7 @@
 <p>Add B0(SUB) or C0(MAIN) after (C=#)to help the machine find its axis<p>
 
 # Stuff to do:    
-<p>Corrected coordinates output<p>
+<p>Correct coordinates output (Again...)<p>
 <p>Look into why one operation has error<p>
 <p>If secondary spindle is active in G71 line's W *-1<p>
     
