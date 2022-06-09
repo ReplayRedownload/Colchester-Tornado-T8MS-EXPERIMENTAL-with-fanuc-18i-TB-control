@@ -1,6 +1,6 @@
 # Colchester-Tornado-T8MS-EXPERIMENTAL-with-fanuc-18i-TB-control
 
-<p>Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Expect to have some bugs...)<p>
+<p>Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control (Customized... Expect to have some bugs and to be a spaghetti mess...)<p>
 <p>In the EXPERIMENTAL file has also comments<p>
 <p>Example: //Changed something bla bla bla -AHF<p>
 <p>You will easily find the differences in the code if you use Visual Studio Code or something else to compare with the one on the internet.<p>
