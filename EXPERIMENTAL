@@ -1155,12 +1155,25 @@ function setWorkPlane(abc) {
 
   onCommand(COMMAND_UNLOCK_MULTI_AXIS);
 
-  writeBlock(
-    gMotionModal.format(0),
-    conditional(machineConfiguration.isMachineCoordinate(0), aOutput.format(abc.x)),
-    conditional(machineConfiguration.isMachineCoordinate(1), bFormat.format(abc.y)),
-    conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z))
-  );
+  if(getSpindle(true)==SPINDLE_SUB){//Added a if else statement and BFormat & CFormat 
+    BFormat = createFormat({prefix:"B", decimals:3, forceDecimal:true, scale:DEG})
+    writeBlock(
+      gMotionModal.format(0),
+      conditional(machineConfiguration.isMachineCoordinate(0), aOutput.format(abc.x)),
+      conditional(machineConfiguration.isMachineCoordinate(1), bFormat.format(abc.y)),
+      conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z)),
+      BFormat.format(abc.z*-1)
+    )
+  }else{
+    CFormat = createFormat({prefix:"C", decimals:3, forceDecimal:true, scale:DEG})
+    writeBlock(
+      gMotionModal.format(0),
+      conditional(machineConfiguration.isMachineCoordinate(0), aOutput.format(abc.x)),
+      conditional(machineConfiguration.isMachineCoordinate(1), bFormat.format(abc.y)),
+      conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z)),
+      CFormat.format(abc.z*-1)
+    )
+  }
 
   if (getSpindle(true)==SPINDLE_SUB){
     writeBlock("A0 (A AXIS TO WORK ZERO)")//Insert A0 if sub spindle is active -AHF
@@ -1836,7 +1849,7 @@ function onSection() {
   gMotionModal.reset();
 
   if (currentSection.isMultiAxis()) {
-    writeBlock(gMotionModal.format(0), aOutput.format(abc.x), bOutput.format(abc.y), cOutput.format(abc.z)+ "SSSSSSSSSSSSSSS");
+    writeBlock(gMotionModal.format(0), aOutput.format(abc.x), bOutput.format(abc.y), cOutput.format(abc.z));
     previousABC = abc;
     forceWorkPlane();
     cancelTransformation();
@@ -1845,14 +1858,10 @@ function onSection() {
       if (gotBAxis) {
         bOutput.reset();
         writeBlock(gMotionModal.format(0), bOutput.format(getB(abc, currentSection)));
-
-
         if (getSpindle(true)==SPINDLE_SUB && wcsOut=="G55"){
           writeBlock("A0 (A AXIS TO WORK ZERO)")//Insert A0 if sub spindle is active and if there is G55 -AHF
         }
-
-
-          machineState.currentBAxisOrientationTurning = abc;
+        machineState.currentBAxisOrientationTurning = abc;
       }
     } else if (!machineState.useXZCMode && !machineState.usePolarMode) {
       setWorkPlane(abc);
