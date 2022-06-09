@@ -2334,9 +2334,9 @@ function onRapid(_x, _y, _z) {
       } else {
         if(getSpindle(true)==SPINDLE_SUB){
           if(getCode("START_SPINDLE_CW",getSpindle(false))==3){
-            if(onCycleEnd()!=80){
+            // if(onCycleEnd()!=80){
             writeBlock(gMotionModal.format(0), xOutput.format(savez) /* +" (DIF VALUE3)" */);//Uncomment when needed -AHF
-            }
+            // }
           }
         } else {
           writeBlock(gMotionModal.format(0), x, y, z /*+" (VALUE3)"*/);//OG, Uncomment when needed -AHF
