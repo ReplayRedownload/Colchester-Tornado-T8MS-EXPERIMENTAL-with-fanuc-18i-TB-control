@@ -1888,17 +1888,17 @@ function onSection() {
       );
     } else {
         if(exist!=true){//Added if else statement so coordinates change places when needed -AHF
-          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/*+ " (VALUE1)"*/);//OG, Uncomment when needed -AHF
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/*+ " (VALUE2)"*/);//OG ,Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)+ " (VALUE1)");//OG, Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (VALUE2)");//OG ,Uncomment when needed -AHF
         } else {
-          if (getCode("START_SPINDLE_CW",getSpindle(false))==3){//Added if else statemend so certain coordinates changed places -AHF
-            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)/*+ " (DIF1 VALUE1)"*/);//Uncomment when needed -AHF
-            writeBlock(gMotionModal.format(0), conditional(gotYAxis, yOutput.format(initialPosition.y))/*+ " (DIF1 VALUE2)"*/);//Uncomment when needed -AHF
+          if (getCode("START_SPINDLE_CW",getSpindle())==3){//Added if else statemend so certain coordinates changed places -AHF
+            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)+ " (DIF1 VALUE1)");//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF1 VALUE2)" */);//Uncomment when needed -AHF
             savex=initialPosition.x;
             savez=initialPosition.z;
           } else {
-          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/*+ " (DIF2 VALUE1)"*/);//Uncomment when needed -AHF
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/*+ " (DIF2 VALUE2)"*/);//Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)+ " (DIF2 VALUE1)");//Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (DIF2 VALUE2)");//Uncomment when needed -AHF
           }
         }
       }
@@ -2335,18 +2335,26 @@ function onRapid(_x, _y, _z) {
         if(getSpindle(true)==SPINDLE_SUB){
           if(getCode("START_SPINDLE_CW",getSpindle(false))==3){
             // if(onCycleEnd()!=80){
-            writeBlock(gMotionModal.format(0), xOutput.format(savez) /* +" (DIF VALUE3)" */);//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), xOutput.format(savez) +" (DIF VALUE3)");//Uncomment when needed -AHF
             // }
           }
         } else {
-          writeBlock(gMotionModal.format(0), x, y, z /*+" (VALUE3)"*/);//OG, Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), x, y, z +" (VALUE3)");//OG, Uncomment when needed -AHF
           // forceFeed();
+          }
+          if(exist!=true){
+            writeBlock(gMotionModal.format(0), x, y, z +" (DIF2 VALUE3)");//OG, Uncomment when needed -AHF
+          } else {
+            if(getCode("START_SPINDLE_CW",getSpindle())==3){
+              //This intentional -AHF
+            } else{
+              writeBlock(gMotionModal.format(0), x, y, z +" (DIF3 VALUE3)");//OG, Uncomment when needed -AHF
+            }
           }
         }
       }
     }
   }
-//}
 
 /** Calculate the distance of a point to a line segment. */
 function pointLineDistance(startPt, endPt, testPt) {
