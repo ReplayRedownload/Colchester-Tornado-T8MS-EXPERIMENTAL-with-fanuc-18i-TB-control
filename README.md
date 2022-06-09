@@ -15,7 +15,6 @@
 <p>G19 => G18<p>
 <p>G83.5 => G83</p>
 <p>M00 => M03<p>
-<p>Polar stuff... is forced and not working 100%... (You will have to manually add G13.1 and stuff like that)</p>
 <p>Changed H0. (Primary spindle incremental adress) => C0. (When primary spindle is active, but there won't be any H0.) OR B0. (When secondary spindle is active, but there won't be any H0.)</p>
 <p>Changed G-Code export description for better differentiating (Only addeed a word...)</p>
 <p>Removed M31 & M32 when secondary spindle is active<p>
@@ -30,9 +29,10 @@
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
 <p>Add B0(SUB) or C0(MAIN) after (C=#)to help the machine find its axis<p>
 <p>If secondary spindle is active in G71 line W change to W *-1<p>
+<p>Corrected coordinates output (I hope it works in other scenarios too...)<p>
+<p>Polar stuff... is forced and not working 100%... (You will have to manually add G13.1 and stuff like that)</p>
     
 # Stuff to do:    
-<p>Correct coordinates output (Almost done, just one more line of output coordinates to correct, it could be easy or hard)<p>
 <p>Look into one operation which has error and possibly try to fix it<p>
     
 # I'm not sure if I need to do this...
