@@ -32,7 +32,7 @@
 <p>If secondary spindle is active in G71 line W change to W *-1<p>
     
 # Stuff to do:    
-<p>Correct coordinates output (Again...)<p>
+<p>Correct coordinates output (Almost done, just one more line of output coordinates to correct, it could be easy or hard)<p>
 <p>Look into why one operation has error<p>
     
 # I'm not sure if I need to do this...
