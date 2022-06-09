@@ -33,7 +33,7 @@
     
 # Stuff to do:    
 <p>Correct coordinates output (Almost done, just one more line of output coordinates to correct, it could be easy or hard)<p>
-<p>Look into why one operation has error<p>
+<p>Look into one operation which has error and possibly try to fix it<p>
     
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
