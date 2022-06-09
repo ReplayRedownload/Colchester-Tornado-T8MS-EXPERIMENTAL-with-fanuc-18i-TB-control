@@ -29,7 +29,7 @@
 <P>G17 => G18 in Eject Part<p>
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
 <p>Add B0(SUB) or C0(MAIN) after (C=#)to help the machine find its axis<p>
-<p>If secondary spindle is active in G71's line W *-1<p>
+<p>If secondary spindle is active in G71 line W change to W *-1<p>
     
 # Stuff to do:    
 <p>Correct coordinates output (Again...)<p>
