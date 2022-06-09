@@ -29,11 +29,11 @@
 <P>G17 => G18 in Eject Part<p>
 <p>Added G00 A0 in a if statemeent in Eject Part<p>
 <p>Add B0(SUB) or C0(MAIN) after (C=#)to help the machine find its axis<p>
-
+<p>If secondary spindle is active in G71's line W *-1<p>
+    
 # Stuff to do:    
 <p>Correct coordinates output (Again...)<p>
 <p>Look into why one operation has error<p>
-<p>If secondary spindle is active in G71 line's W *-1<p>
     
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
