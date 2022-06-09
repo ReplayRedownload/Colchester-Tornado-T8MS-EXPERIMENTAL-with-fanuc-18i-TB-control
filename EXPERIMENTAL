@@ -3498,13 +3498,23 @@ function onCyclePathEnd() {
       (verticalPasses ? "W" : "U") + spatialFormat.format(cycle.depthOfCut),
       "R" + spatialFormat.format(cycle.retractLength)
     );
-    writeBlock(gFormat.format(verticalPasses ? 72 : 71),
-      "P" + (getStartEndSequenceNumber(cyclePath, true)),
-      "Q" + (getStartEndSequenceNumber(cyclePath, false)),
-      "U" + xFormat.format(cycle.xStockToLeave),
-      "W" + spatialFormat.format(cycle.zStockToLeave),
-      getFeed(cycle.cutfeedrate)
-    );
+    if(getSpindle(true)==SPINDLE_SUB){//Added if else statement in the if part W# is now W-# -AHF
+      writeBlock(gFormat.format(verticalPasses ? 72 : 71),
+        "P" + (getStartEndSequenceNumber(cyclePath, true)),
+        "Q" + (getStartEndSequenceNumber(cyclePath, false)),
+        "U" + xFormat.format(cycle.xStockToLeave),
+        "W" + -1*spatialFormat.format(cycle.zStockToLeave),//Added -1* -AHF
+        getFeed(cycle.cutfeedrate)
+      );
+    } else {//OG -AHF
+      writeBlock(gFormat.format(verticalPasses ? 72 : 71),
+        "P" + (getStartEndSequenceNumber(cyclePath, true)),
+        "Q" + (getStartEndSequenceNumber(cyclePath, false)),
+        "U" + xFormat.format(cycle.xStockToLeave),
+        "W" + spatialFormat.format(cycle.zStockToLeave),
+        getFeed(cycle.cutfeedrate)
+      );
+    }
     break;
   default:
     error(localize("Unsupported turning canned cycle."));
