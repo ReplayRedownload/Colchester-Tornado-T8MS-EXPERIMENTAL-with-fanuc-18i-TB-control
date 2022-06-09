@@ -1165,13 +1165,13 @@ function setWorkPlane(abc) {
       BFormat.format(abc.z*-1)
     )
   }else{
-    CFormat = createFormat({prefix:"C", decimals:3, forceDecimal:true, scale:DEG})
+    // CFormat = createFormat({prefix:"C", decimals:3, forceDecimal:true, scale:DEG})
     writeBlock(
       gMotionModal.format(0),
       conditional(machineConfiguration.isMachineCoordinate(0), aOutput.format(abc.x)),
       conditional(machineConfiguration.isMachineCoordinate(1), bFormat.format(abc.y)),
-      conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z)),
-      CFormat.format(abc.z*-1)
+      conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z))
+      // CFormat.format(abc.z*-1)
     )
   }
 
@@ -2332,13 +2332,15 @@ function onRapid(_x, _y, _z) {
         writeBlock(gMotionModal.format(1), x, y, z, getFeed(highFeed));
         resetFeed = false;
       } else {
+        if(getSpindle(true)==SPINDLE_SUB){
           if(getCode("START_SPINDLE_CW",getSpindle(false))==3){
             if(onCycleEnd()!=80){
             writeBlock(gMotionModal.format(0), xOutput.format(savez) /* +" (DIF VALUE3)" */);//Uncomment when needed -AHF
             }
-          } else {
-            writeBlock(gMotionModal.format(0), x, y, z /*+" (VALUE3)"*/);//OG, Uncomment when needed -AHF
-            // forceFeed();
+          }
+        } else {
+          writeBlock(gMotionModal.format(0), x, y, z /*+" (VALUE3)"*/);//OG, Uncomment when needed -AHF
+          // forceFeed();
           }
         }
       }
@@ -3314,9 +3316,9 @@ function onCyclePoint(x, y, z) {
   // clamp the C-axis if necessary
   // the C-axis is automatically unclamped by the controllers during cycles
   var lockCode = "";
-  if (!machineState.axialCenterDrilling && !machineState.isTurningOperation && (getSpindle(true)!=SPINDLE_SUB)) {//Added && (getSpindle(true)!=SPINDLE_SUB), so M31 (maybe also M32, don't remember) will not appear when secondary spindle is active -AHF
+  if (!machineState.axialCenterDrilling && !machineState.isTurningOperation && (getSpindle(true)!=SPINDLE_SUB)) {//Added && (getSpindle(true)!=SPINDLE_SUB), so M31 (maybe also M32) will not appear when secondary spindle is active -AHF
     lockCode = mFormat.format(getCode("LOCK_MULTI_AXIS", getSpindle(true)));
-  }
+  } 
 
   var rapto = 0;
   if (isFirstCyclePoint()) { // first cycle point
