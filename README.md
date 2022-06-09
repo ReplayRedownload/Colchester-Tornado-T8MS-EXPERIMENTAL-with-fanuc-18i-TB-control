@@ -33,6 +33,6 @@
 # Stuff to do:    
 <p>Check if thread is working as intented, something about G76<p>
 <p>Add B0(SUB) or C0(MAIN) after (C=#)to help the machine find its axis<p>
-    
+<p>FIX CODE, SO IT ALSO CAN WORK ON MAIN SPINDLE<p>
 # I'm not sure if I need to do this...
 <p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
