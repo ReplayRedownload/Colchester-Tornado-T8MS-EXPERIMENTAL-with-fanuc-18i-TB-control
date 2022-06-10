@@ -23,7 +23,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-description = "Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control";
+description = "Colchester Tornado T8MS Y Axis with fanuc 18i-TB control";
 vendor = "Colchester Machine Tools";
 EditedByPersonFoundInUrl = "https://www.andrejsgelins@gmail.com";
 legal = "Copyright (C) 2012-2021 by Autodesk, Inc.";
@@ -307,7 +307,7 @@ var g1Format = createFormat({prefix:"G", decimals:1, width:2, zeropad:true});
 var mFormat = createFormat({prefix:"M", decimals:0, width:2, zeropad:true});
 
 var spatialFormat = createFormat({decimals:(unit == MM ? 3 : 4), forceDecimal:true});
-var xFormat = createFormat({decimals:(unit == MM ? 3 : 4), forceDecimal:true, scale:2}); // diameter mode & IS SCALING POLAR COORDINATES
+var xFormat = createFormat({decimals:(unit == MM ? 3 : 4), forceDecimal:true, scale:-1}); // diameter mode & IS SCALING POLAR COORDINATES
 var yFormat = createFormat({decimals:(unit == MM ? 3 : 4), forceDecimal:true});
 var zFormat = createFormat({decimals:(unit == MM ? 3 : 4), forceDecimal:true});
 var rFormat = createFormat({decimals:(unit == MM ? 3 : 4), forceDecimal:true}); // radius
@@ -371,7 +371,7 @@ var tailStockModal = createModal({}, mFormat);
 // fixed settings
 var firstFeedParameter = 100;
 
-var gotYAxis = false;
+var gotYAxis = true;
 var yAxisMinimum = toPreciseUnit(gotYAxis ? -5.0 : 0, MM); // specifies the minimum range for the Y-axis
 var yAxisMaximum = toPreciseUnit(gotYAxis ? 5.0 : 0, MM); // specifies the maximum range for the Y-axis
 var xAxisMinimum = toPreciseUnit(0, MM); // specifies the maximum range for the X-axis (RADIUS MODE VALUE)
@@ -1885,22 +1885,39 @@ function onSection() {
         conditional(machineState.useXZCMode, cOutput.format(getC(initialPosition.x, initialPosition.y)))
       );
     } else {
+      if (gotYAxis==true){
         if(exist!=true){//Added if else statement so coordinates change places when needed -AHF
-          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/* + " (VALUE1)" */);//OG, Uncomment when needed -AHF
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (VALUE2)" */);//OG ,Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)+ " (VALUE1)");//OG, Uncomment when needed -AHF (Correct...)
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), /* conditional(gotYAxis, yOutput.format(initialPosition.y))+ */ " (VALUE2)");//OG ,Uncomment when needed -AHF (FIX)
         } else {
           if (getCode("START_SPINDLE_CW",getSpindle())==3){//Added if else statemend so certain coordinates changed places -AHF
-            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)/* + " (DIF1 VALUE1)" */);//Uncomment when needed -AHF
-            writeBlock(gMotionModal.format(0), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF1 VALUE2)" */);//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)+ " (DIF1 VALUE1)");//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (DIF1 VALUE2)");//Uncomment when needed -AHF
             savex=initialPosition.x;
             savez=initialPosition.z;
           } else {
-          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/* + " (DIF2 VALUE1)" */);//Uncomment when needed -AHF
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF2 VALUE2)" */);//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)+ " (DIF2 VALUE1)");//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (DIF2 VALUE2)");//Uncomment when needed -AHF
+          }
+        }
+      }else{
+        if(exist!=true){//Added if else statement so coordinates change places when needed -AHF
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)+ " (VALUE1)");//OG, Uncomment when needed -AHF (Correct...)
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), /* conditional(gotYAxis, yOutput.format(initialPosition.y))+ */ " (VALUE2)");//OG ,Uncomment when needed -AHF (FIX)
+        } else {
+          if (getCode("START_SPINDLE_CW",getSpindle())==3){//Added if else statemend so certain coordinates changed places -AHF
+            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)+ " (DIF1 VALUE1)");//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (DIF1 VALUE2)");//Uncomment when needed -AHF
+            savex=initialPosition.x;
+            savez=initialPosition.z;
+          } else {
+            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)+ " (DIF2 VALUE1)");//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))+ " (DIF2 VALUE2)");//Uncomment when needed -AHF
           }
         }
       }
     }
+  }
 
   // enable SFM spindle speed
   if (tool.getSpindleMode() == SPINDLE_CONSTANT_SURFACE_SPEED) {
@@ -2332,19 +2349,19 @@ function onRapid(_x, _y, _z) {
       } else {
         if(getSpindle(true)==SPINDLE_SUB){
           if(getCode("START_SPINDLE_CW",getSpindle(false))==3){
-            writeBlock(gMotionModal.format(0), xOutput.format(savez)/*  +" (DIF VALUE3)" */);//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), xOutput.format(savez) +" (DIF VALUE3)");//Uncomment when needed -AHF
           }
         } else {
-          writeBlock(gMotionModal.format(0), x, y, z /* +" (VALUE3) "*/);//OG, Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), x, y, z +" (VALUE3) ");//OG, Uncomment when needed -AHF
           // forceFeed();
           }
           if(exist!=true){
-            writeBlock(gMotionModal.format(0), x, y, z /* +" (DIF2 VALUE3)" */);//OG, Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), x, y, z +" (DIF2 VALUE3)");//OG, Uncomment when needed -AHF
           } else {
             if(getCode("START_SPINDLE_CW",getSpindle())==3){
               //This intentional -AHF
             } else{
-              writeBlock(gMotionModal.format(0), x, y, z/*  +" (DIF3 VALUE3)" */);//OG, Uncomment when needed -AHF
+              writeBlock(gMotionModal.format(0), x, y, z +" (DIF3 VALUE3)");//OG, Uncomment when needed -AHF
             }
           }
         }
@@ -3754,15 +3771,11 @@ function onCommand(command) {
       writeBlock(cAxisBrakeModal.format(getCode("LOCK_MULTI_AXIS", getSpindle(true))));
     }
     break;
-
-
   case COMMAND_UNLOCK_MULTI_AXIS://Added if statement, so M32 does not appear when secondary spindle is active -AHF
     if(getSpindle(true)!=SPINDLE_SUB){
       writeBlock(cAxisBrakeModal.format(getCode("UNLOCK_MULTI_AXIS", getSpindle(true))));
     }
     break;
-
-
   case COMMAND_START_CHIP_TRANSPORT:
     writeBlock(mFormat.format(00), formatComment("IESLEDZ SKAIDU KONVEIJERU"));
     break;
@@ -3957,7 +3970,7 @@ function onSectionEnd() {
   if (getProperty("gotPartCatcher") && partCutoff && currentSection.partCatcher) {
     engagePartCatcher(false);
   }
-  /*
+  /* 
   if (getProperty("cutoffConfirmation") && partCutoff) {
     writeBlock(gFormat.format(28), "U0", mFormat.format(9));
     writeBlock(gFormat.format(300), formatComment("CONFIRM CUTOFF"));
@@ -3972,7 +3985,7 @@ function onSectionEnd() {
       writeBlock(cAxisEngageModal.format(getCode("DISABLE_C_AXIS", getSpindle(true))));
     }
   }
-*/
+ */
   
   if (((getCurrentSectionId() + 1) >= getNumberOfSections()) ||
       (tool.number != getNextSection().getTool().number)) {
