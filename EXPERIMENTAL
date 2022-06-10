@@ -1165,13 +1165,11 @@ function setWorkPlane(abc) {
       BFormat.format(abc.z*-1)
     )
   }else{
-    // CFormat = createFormat({prefix:"C", decimals:3, forceDecimal:true, scale:DEG})
     writeBlock(
       gMotionModal.format(0),
       conditional(machineConfiguration.isMachineCoordinate(0), aOutput.format(abc.x)),
       conditional(machineConfiguration.isMachineCoordinate(1), bFormat.format(abc.y)),
       conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z))
-      // CFormat.format(abc.z*-1)
     )
   }
 
@@ -2334,9 +2332,7 @@ function onRapid(_x, _y, _z) {
       } else {
         if(getSpindle(true)==SPINDLE_SUB){
           if(getCode("START_SPINDLE_CW",getSpindle(false))==3){
-            // if(onCycleEnd()!=80){
             writeBlock(gMotionModal.format(0), xOutput.format(savez)/*  +" (DIF VALUE3)" */);//Uncomment when needed -AHF
-            // }
           }
         } else {
           writeBlock(gMotionModal.format(0), x, y, z /* +" (VALUE3) "*/);//OG, Uncomment when needed -AHF
@@ -3192,13 +3188,18 @@ function getCommonCycle(x, y, z, r, includeRcode) {
     return [xOutput.format(getModulus(x, y)), cOutput.format(getCClosest(x, y, cOutput.getCurrent())),
       zOutput.format(z),
       raptoS];
-  } else if (counterboring==true){
+  } else if (counterboring==true){//Added this -AHF
     return [xOutput.format(x), yOutput.format(y),
       raptoS];
   } else {
-    return [xOutput.format(x), yOutput.format(y),
-      zOutput.format(z),
-      raptoS];
+    if(exist==true){
+      return [xOutput.format(x),
+        raptoS];
+    } else {
+      return [xOutput.format(x), yOutput.format(y),
+        zOutput.format(z),
+        raptoS];
+    }
   }
 }
 
