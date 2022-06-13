@@ -3413,7 +3413,7 @@ function onCyclePoint(x, y, z) {
         gCycleModal.format(gCode),
         getCommonCycle(x, y, z, rapto, true),
         conditional(P > 0, pOutput.format(P)),
-        pitchOutput.format(F/1000),
+        pitchOutput.format(F/100),
         lockCode
       );
       break;
