@@ -443,8 +443,7 @@ var machineState = {
 //Custom vars -AHF
 var exist;
 var counterboring;
-var savez;
-var savex;
+var savez; var savex; var savem;
 
 function getCode(code, spindle) {
   switch (code) {
@@ -496,10 +495,17 @@ function getCode(code, spindle) {
       machineState.liveToolIsActive = false;
       return 103;
     case SPINDLE_LIVE:
-      machineState.liveToolIsActive = true;
-      machineState.mainSpindleIsActive = false;
-      machineState.subSpindleIsActive = false;
-      return 3;
+      if (savem==8) {
+        machineState.liveToolIsActive = true;
+        machineState.mainSpindleIsActive = false;
+        machineState.subSpindleIsActive = false;
+        return 13;
+      } else {
+        machineState.liveToolIsActive = true;
+        machineState.mainSpindleIsActive = false;
+        machineState.subSpindleIsActive = false;
+        return 3;
+      }
     }
     break;
   case "START_SPINDLE_CCW":
@@ -515,10 +521,17 @@ function getCode(code, spindle) {
       machineState.liveToolIsActive = false;
       return 104;
     case SPINDLE_LIVE:
-      machineState.liveToolIsActive = true;
-      machineState.mainSpindleIsActive = false;
-      machineState.subSpindleIsActive = false;
-      return 4;
+      if (savem==8) {
+          machineState.liveToolIsActive = true;
+          machineState.mainSpindleIsActive = false;
+          machineState.subSpindleIsActive = false;
+          return 14;
+      } else {
+        machineState.liveToolIsActive = true;
+        machineState.mainSpindleIsActive = false;
+        machineState.subSpindleIsActive = false;
+        return 4;
+      }
     }
     break;
   case "FEED_MODE_MM_REV":
@@ -3442,7 +3455,7 @@ function onCyclePoint(x, y, z) {
       if (cycleType == "chip-breaking" || cycleType == "deep-drilling") {
         step = cycle.incrementalDepth;
       }
-      writeBlock(getCommonCycle(x, y, z, rapto, false), conditional(step > 0, peckOutput.format(step)), lockCode+'aaaaaaa');
+      writeBlock(getCommonCycle(x, y, z, rapto, false), conditional(step > 0, peckOutput.format(step)), lockCode+'(CHECK IF B AXIS IS HERE)');
     }
   }
 }
@@ -3637,18 +3650,22 @@ function setCoolant(coolant) {
   switch (coolant) {
   case COOLANT_FLOOD:
     m = 8;
+    savem = m;
     break;
   case COOLANT_AIR_THROUGH_TOOL:
     m = getCode("COOLANT_AIR_THROUGH_TOOL", getSpindle(true));
+    savem = m;
     break;
   case COOLANT_AIR:
     m = getCode("COOLANT_AIR_ON", getSpindle(true));
+    savem = m;
     break;
   default:
     warning(localize("Coolant not supported."));
     if (currentCoolantMode == COOLANT_OFF) {
       return;
     }
+    savem = m;
     coolant = COOLANT_OFF;
     m = getCode("COOLANT_OFF", getSpindle(true));
   }
