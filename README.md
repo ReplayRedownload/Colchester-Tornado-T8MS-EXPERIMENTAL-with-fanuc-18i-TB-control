@@ -31,10 +31,4 @@
 <p>If secondary spindle is active in G71 line W change to W *-1<p>
 <p>Corrected coordinates output (I hope it works in other scenarios too...)<p>
 <p>Polar stuff... is forced and not working 100%... (You will have to manually add G13.1 and stuff like that)</p>
-    
-# Stuff to do:    
-<p>Look into one operation which has error and possibly try to fix it<p>
-    
-# I'm not sure if I need to do this...
-<p>Insert before C0/B0 M-Code M109/M112 (Optional, also before tool(Not really sure if I remember it correctly))</p>
-<p>Check if thread is working as intented, something about G76<p>
+<p>When Flood is on M03/M04 => M13/M14<p>
