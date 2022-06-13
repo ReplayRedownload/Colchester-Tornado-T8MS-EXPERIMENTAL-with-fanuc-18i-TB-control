@@ -395,7 +395,6 @@ var POXY = 1;
 var POSZ = 2;
 var NEGZ = -2;
 
-
 var TRANSFER_PHASE = 0;
 var TRANSFER_SPEED = 1;
 var TRANSFER_STOP = 2;
@@ -438,7 +437,6 @@ var machineState = {
   axialCenterDrilling: undefined,
   currentBAxisOrientationTurning: new Vector(0, 0, 0)
 };
-
 
 //Custom vars -AHF
 var exist;
@@ -536,9 +534,9 @@ function getCode(code, spindle) {
     }
     break;
   case "FEED_MODE_MM_REV":
-    return 95; //AHF 99 to 95
+    return 95; //AHF 99 to 95 -AHF
   case "FEED_MODE_MM_MIN":
-    return 94; //AHF 98 to 94
+    return 94; //AHF 98 to 94 -AHF
   case "CONSTANT_SURFACE_SPEED_ON":
     return 96;
   case "CONSTANT_SURFACE_SPEED_OFF":
@@ -864,7 +862,8 @@ function onOpen() {
           (tool.isTurningTool() ? localize("NR") + "=" + spatialFormat.format(tool.noseRadius) : localize("CR") + "=" + spatialFormat.format(tool.cornerRadius)) +
           (tool.taperAngle > 0 && (tool.taperAngle < Math.PI) ? " " + localize("TAPER") + "=" + taperFormat.format(tool.taperAngle) + localize("deg") : "") +
           (zRanges[tool.number] ? " - " + localize("ZMIN") + "=" + spatialFormat.format(zRanges[tool.number].getMinimum()) : "") +
-          " - " + localize(getToolTypeName(tool.type) + " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL " -AHF
+          " - " + localize(getToolTypeName(tool.type), 
+          " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL " -AHF
         writeComment(comment);
       }
     }
@@ -1169,7 +1168,7 @@ function setWorkPlane(abc) {
 
   onCommand(COMMAND_UNLOCK_MULTI_AXIS);
 
-  if(getSpindle(true)==SPINDLE_SUB){//Added a if else statement and BFormat & CFormat 
+  if(getSpindle(true)==SPINDLE_SUB){//Added a if else statement and BFormat & CFormat -AHF
     BFormat = createFormat({prefix:"B", decimals:3, forceDecimal:true, scale:DEG})
     writeBlock(
       gMotionModal.format(0),
@@ -1404,9 +1403,9 @@ function invertAxes(activate, polarMode) {
     xOutput = createVariable({prefix:"X"}, xFormat);
     yOutput = createVariable({onchange: function() {yAxisIsRetracted = false;}, prefix:"Y"}, yFormat);
     zOutput = createVariable({prefix:"Z"}, zFormat);
-    if(getSpindle(true)==SPINDLE_MAIN){//Added if else statement to change when primary or secondary spindle is active -AHF
+    if (getSpindle(true)==SPINDLE_MAIN) {//Added if else statement to change when primary or secondary spindle is active -AHF
       cOutput = createVariable({prefix:"C"}, cFormat);
-    }else{
+    } else {
       cOutput = createVariable({prefix:"B"}, cFormat);
     }
     iOutput = createReferenceVariable({prefix:"I", force:true}, spatialFormat);
@@ -3067,17 +3066,14 @@ function onCycle() {
           writeBlock(mFormat.format(getCode("UNCLAMP_CHUCK", getSecondarySpindle())), formatComment("UNCLAMP SUB CHUCK"));
           onDwell(cycle.dwell);
         }
-
         if ((transferCodes != undefined) && !transferCodes.cutoff) {
           writeBlock(mFormat.format(getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true))), formatComment("CANCEL SYNCHRONIZATION"));
         } else {
           var code = getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true));
           writeBlock(mFormat.format(code), formatComment("CANCEL SYNCHRONIZATION"));
         }
-
         onCommand(COMMAND_STOP_SPINDLE);//Moved this below the if else statement, the one above ^ -AHF
         writeBlock(mFormat.format(getCode("STOP_SPINDLE", getSecondarySpindle())));//Moved this below the if else statement, the one above ^ -AHF
-
         retractSubSpindle();
       } else {
         writeBlock(mFormat.format(getCode("CLAMP_CHUCK", getSpindle(true))), formatComment("CLAMP MAIN CHUCK"));
@@ -3656,7 +3652,7 @@ function setCoolant(coolant) {
   switch (coolant) {
   case COOLANT_FLOOD:
     m = 8;
-    savem = m;
+    savem = m; //Save m -AHF
     break;
   case COOLANT_AIR_THROUGH_TOOL:
     m = getCode("COOLANT_AIR_THROUGH_TOOL", getSpindle(true));
@@ -3763,22 +3759,16 @@ function onCommand(command) {
   case COMMAND_COOLANT_ON:
     setCoolant(COOLANT_FLOOD);
     break;
-
-
   case COMMAND_LOCK_MULTI_AXIS://Added if statement, so M31 does not appear when secondary spindle is active -AHF
     if(getSpindle(true)!=SPINDLE_SUB){
       writeBlock(cAxisBrakeModal.format(getCode("LOCK_MULTI_AXIS", getSpindle(true))));
     }
     break;
-
-
   case COMMAND_UNLOCK_MULTI_AXIS://Added if statement, so M32 does not appear when secondary spindle is active -AHF
     if(getSpindle(true)!=SPINDLE_SUB){
       writeBlock(cAxisBrakeModal.format(getCode("UNLOCK_MULTI_AXIS", getSpindle(true))));
     }
     break;
-
-
   case COMMAND_START_CHIP_TRANSPORT:
     writeBlock(mFormat.format(00), formatComment("IESLEDZ SKAIDU KONVEIJERU"));
     break;
@@ -3929,17 +3919,14 @@ function ejectPart() {
   }
   writeBlock(mFormat.format(getCode("STOP_SPINDLE", getSpindle(true))));
   setCoolant(COOLANT_OFF);
-
   //Added retractSubSpindle function but with a changed valued -AHF
   if (getProperty("useG28")) {
-    writeBlock(gFormat.format(0), gFormat.format(28), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));//Changed gMotionModal(0) to gFormat(0)
+    writeBlock(gFormat.format(0), gFormat.format(28), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));//Changed gMotionModal(0) to gFormat(0) -AHF
     writeBlock(gMotionModal.format(0), gFormat.format(90),  formatComment("RETURN TO ABS PR"));
   } else {
     writeBlock(gMotionModal.format(0), gFormat.format(53), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));
     writeBlock(gMotionModal.format(0), gFormat.format(90),  formatComment("RETURN TO ABS PR"));
   }
-
-
   writeComment(localize("END OF PART EJECT"));
   writeln("");
 }
@@ -4046,16 +4033,12 @@ function onClose() {
   if (liveTool) {
     writeBlock(cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
     // writeBlock(gFormat.format(28), "H" + abcFormat.format(0)); // unwind //Commented -AHF  
-
-
     if (getSpindle()==SPINDLE_MAIN) {
       writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
     } else{
-      writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //It sub spindle is active (it's working... somehow...) -AHF
+      writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //If sub spindle is active (it's working... somehow...) -AHF
       
     }
-
-
     // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
   }
   writeBlock(cAxisEngageModal.format(getCode("DISABLE_C_AXIS", getSpindle(true))));
