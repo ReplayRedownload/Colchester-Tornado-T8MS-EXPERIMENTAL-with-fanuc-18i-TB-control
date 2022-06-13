@@ -444,6 +444,7 @@ var machineState = {
 var exist;
 var counterboring;
 var savez; var savex; var savem;
+var InvertAxes;
 
 function getCode(code, spindle) {
   switch (code) {
@@ -1560,7 +1561,8 @@ function onSection() {
   
   // invert axes for secondary spindle
   if (getSpindle(true) == SPINDLE_SUB) {
-    invertAxes(true, true); // polar mode has not been enabled yet //Changed (true, false) to (true, true) to active polar mode -AHF
+    invertAxes(true, false); // polar mode has not been enabled yet //Changed (true, false) to (true, true) to active polar mode -AHF
+    var InvertAxes = true;
   }
 
   // activate Y-axis
@@ -3345,7 +3347,9 @@ function onCyclePoint(x, y, z) {
     switch (cycleType) {
     case "drilling":
     case "counter-boring":
-      x=z; //Assigned z value to x -AHF
+      if(InvertAxes==true){
+        x=z;//Added this -AHF idk
+      }      
       counterboring = true;//Added and Assigned to custom var value true -AHF
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
@@ -3369,7 +3373,7 @@ function onCyclePoint(x, y, z) {
           conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
           conditional(P > 0, pOutput.format(P)),
           feedOutput.format(F),
-          lockCode+'bbb'
+          lockCode
         );
       }
       break;
@@ -3382,7 +3386,7 @@ function onCyclePoint(x, y, z) {
         conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
         conditional(P > 0, pOutput.format(P)),
         feedOutput.format(F),
-        lockCode+'ccccccc'
+        lockCode
       );
       break;
     case "tapping":
@@ -3402,12 +3406,14 @@ function onCyclePoint(x, y, z) {
         writeBlock(mFormat.format(94));
       }
 */    
+      if(InvertAxes==true){
       x=z;//Added this -AHF idk
+      }
       writeBlock(
         gCycleModal.format(gCode),
         getCommonCycle(x, y, z, rapto, true),
         conditional(P > 0, pOutput.format(P)),
-        pitchOutput.format(F),
+        pitchOutput.format(F/1000),
         lockCode
       );
       break;
@@ -3455,7 +3461,7 @@ function onCyclePoint(x, y, z) {
       if (cycleType == "chip-breaking" || cycleType == "deep-drilling") {
         step = cycle.incrementalDepth;
       }
-      writeBlock(getCommonCycle(x, y, z, rapto, false), conditional(step > 0, peckOutput.format(step)), lockCode+'(CHECK IF B AXIS IS HERE)');
+      writeBlock(getCommonCycle(x, y, z, rapto, false), conditional(step > 0, peckOutput.format(step)), lockCode);
     }
   }
 }
