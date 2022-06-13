@@ -14,8 +14,8 @@
 <p>G17 => G18</p>
 <p>G19 => G18<p>
 <p>G83.5 => G83</p>
-    <p>M00 => M03<p>
-    <p>Added G94 in eject part<p>
+<p>M00 => M03<p>
+<p>Added G94 in eject part<p>
 <p>G54 => G55 in Eject Part<p>
 <P>G17 => G18 in Eject Part<p>
 <p>Changed H0. (Primary spindle incremental adress) => C0. (When primary spindle is active, but there won't be any H0.) OR B0. (When secondary spindle is active, but there won't be any H0.)</p>
@@ -30,5 +30,4 @@
 <p>Add B0(SUB) or C0(MAIN) after (C=#)to help the machine find its axis<p>
 <p>If secondary spindle is active in G71 line W change to W *-1<p>
 <p>Corrected coordinates output (I hope it works in other scenarios too...)<p>
-<p>Polar stuff... is forced and not working 100%... (You will have to manually add G13.1 and stuff like that)</p>
 <p>When Flood is on M03/M04 => M13/M14<p>
