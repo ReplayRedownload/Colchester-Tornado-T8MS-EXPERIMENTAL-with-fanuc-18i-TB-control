@@ -1172,11 +1172,9 @@ function setWorkPlane(abc) {
       conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z))
     )
   }
-
   if (getSpindle(true)==SPINDLE_SUB){
     writeBlock("A0 (A AXIS TO WORK ZERO)")//Insert A0 if sub spindle is active -AHF
   }
-
   onCommand(COMMAND_LOCK_MULTI_AXIS);
 
   currentWorkPlaneABC = abc;
@@ -1392,15 +1390,11 @@ function invertAxes(activate, polarMode) {
     xOutput = createVariable({prefix:"X"}, xFormat);
     yOutput = createVariable({onchange: function() {yAxisIsRetracted = false;}, prefix:"Y"}, yFormat);
     zOutput = createVariable({prefix:"Z"}, zFormat);
-
-
     if(getSpindle(true)==SPINDLE_MAIN){//Added if else statement to change when primary or secondary spindle is active -AHF
       cOutput = createVariable({prefix:"C"}, cFormat);
     }else{
       cOutput = createVariable({prefix:"B"}, cFormat);
     }
-
-
     iOutput = createReferenceVariable({prefix:"I", force:true}, spatialFormat);
     jOutput = createReferenceVariable({prefix:"J", force:true}, spatialFormat);
     kOutput = createReferenceVariable({prefix:"K", force:true}, spatialFormat);
@@ -1632,20 +1626,15 @@ function onSection() {
       writeBlock(wcsOut);
       writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
       // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //Commented -AHF
-  
-      
       if (SPINDLE_MAIN==getSpindle(true)) {
         writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
       } else {
         writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //If sub spindle is active (it's working... somehow...) -AHF
         exist = true;
       }
-
-      
       if(getSpindle(true)==SPINDLE_SUB && wcsOut=="G55" && exist!=true){
         writeBlock("A0 (A AXIS TO WORK ZERO)")// Insert A0 if sub spindle is active and if G55 exists and if there is no previous A0 (It's a mess...) -AHF
       }
-
       // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
       if (!machineState.usePolarMode && !machineState.useXZCMode && !currentSection.isMultiAxis()) {
         onCommand(COMMAND_LOCK_MULTI_AXIS);
@@ -2148,7 +2137,11 @@ function setPolarMode(activate) {
   if (activate) {
     cOutput.enable();
     cOutput.reset();
-    writeBlock(gMotionModal.format(0), cOutput.format(0)); // set C-axis to 0 to avoid G112 issues
+    if(getSpindle(true)==SPINDLE_SUB){
+      writeBlock(gMotionModal.format(0), 'B0.'); // set B-axis to 0 -AHF
+    } else {
+      writeBlock(gMotionModal.format(0), cOutput.format(0)); // set C-axis to 0 to avoid G112 issues
+    }
     writeBlock(gPolarModal.format(getCode("POLAR_INTERPOLATION_ON", getSpindle(false)))); // command for polar interpolation
     // writeBlock(gPlaneModal.format(getG17Code()));
     if (getSpindle(true) == SPINDLE_SUB) {
@@ -2928,7 +2921,7 @@ function onCircular(clockwise, cx, cy, cz, x, y, z, feed) {
     }
     switch (getCircularPlane()) {
     case PLANE_XY:
-      writeBlock(gPlaneModal.format(getG17Code()), gMotionModal.format(directionCode), xOutput.format(x), yOutput.format(y), zOutput.format(z), iOutput.format(cx - start.x, 0), jOutput.format(cy - start.y, 0), getFeed(feed));
+      writeBlock(gPlaneModal.format(18), gMotionModal.format(directionCode), xOutput.format(x), yOutput.format(y), zOutput.format(z), iOutput.format(cx - start.x, 0), jOutput.format(cy - start.y, 0), getFeed(feed));//Changed getG17Code() to 18 -AHF
       break;
     case PLANE_ZX:
       if (machineState.usePolarMode) {
@@ -2958,7 +2951,7 @@ function onCircular(clockwise, cx, cy, cz, x, y, z, feed) {
     }
     switch (getCircularPlane()) {
     case PLANE_XY:
-      writeBlock(gPlaneModal.format(getG17Code()), gMotionModal.format(directionCode), xOutput.format(x), yOutput.format(y), zOutput.format(z), "R" + rFormat.format(r), getFeed(feed));
+      writeBlock(gPlaneModal.format(18), gMotionModal.format(directionCode), xOutput.format(x), yOutput.format(y), zOutput.format(z), "R" + rFormat.format(r), getFeed(feed));//Changed getG17Code() to 18 -AHF
       break;
     case PLANE_ZX:
       if (machineState.usePolarMode) {
@@ -3363,7 +3356,7 @@ function onCyclePoint(x, y, z) {
           conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
           conditional(P > 0, pOutput.format(P)),
           feedOutput.format(F),
-          lockCode
+          lockCode+'bbb'
         );
       }
       break;
@@ -3376,7 +3369,7 @@ function onCyclePoint(x, y, z) {
         conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
         conditional(P > 0, pOutput.format(P)),
         feedOutput.format(F),
-        lockCode
+        lockCode+'ccccccc'
       );
       break;
     case "tapping":
@@ -3449,7 +3442,7 @@ function onCyclePoint(x, y, z) {
       if (cycleType == "chip-breaking" || cycleType == "deep-drilling") {
         step = cycle.incrementalDepth;
       }
-      writeBlock(getCommonCycle(x, y, z, rapto, false), conditional(step > 0, peckOutput.format(step)), lockCode);
+      writeBlock(getCommonCycle(x, y, z, rapto, false), conditional(step > 0, peckOutput.format(step)), lockCode+'aaaaaaa');
     }
   }
 }
@@ -3894,11 +3887,7 @@ function ejectPart() {
   // writeBlock(mFormat.format(getCode("INTERLOCK_BYPASS", getSpindle(true))));
   if (getProperty("gotPartCatcher")) {
     writeBlock(mFormat.format(getCode("PART_CATCHER_ON", getSpindle(true))));
-
-
     writeBlock("G00 A0.");//Added this line in this if statement -AHF
-
-
   }
   writeBlock(mFormat.format(getCode("UNCLAMP_CHUCK", getSpindle(true))));
   onDwell(1.5);
@@ -3946,7 +3935,7 @@ function engagePartCatcher(engage) {
 function onSectionEnd() {
 
   if (machineState.usePolarMode) {
-    setPolarMode(true); // disable polar interpolation mode //Changed (false) to (true) -AHF
+    setPolarMode(false); // disable polar interpolation mode //Changed (false) to (true) -AHF
   }
 
   // cancel SFM mode to preserve spindle speed
