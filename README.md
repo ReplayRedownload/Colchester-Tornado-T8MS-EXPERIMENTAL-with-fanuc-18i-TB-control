@@ -19,20 +19,32 @@
   <li>G83.6 => G83;</li>
   <li>M00 => M03;</li>
   <li>G54 => G55 in Eject Part;</li>
-   
+  <li>Export description</li>
+  <li>Moved M05 & M105 below M116 (Cancel synchronization)</li>
 </ul>
-<p>Added G94 in eject part<p>
-<p>Changed H0. (Primary spindle incremental adress) => C0. (When primary spindle is active, but there won't be any H0.) OR B0. (When secondary spindle is active, but there won't be any H0.)</p>
-<p>Changed G-Code export description for better differentiating (Only addeed a word...)</p>
-<p>Removed M31 & M32 when secondary spindle is active<p>
-<p>Make a certain character *cough* C0. *cough* to be the same when primary spindle active or become B0. when secondary spindle is active. (Works...)</p>
-<p>Insert A0 after G55 and G00 when secondary spindle is active<p>
-<p>In subspindle grab removed(commented) unwated code (Torque skip on/off & G31 P98)<p>
-<p>Moved M05, M105 below M116 (Cancel synchronization)<p>
-<p>Added Sub spindle retun AND Return to ABS PR in Part Eject end.<p>
-<p>Added G00 A0 in a if statemeent in Eject Part<p>
-<p>Add B0(SUB) or C0(MAIN) after (C=#)to help the machine find its axis<p>
-<p>If secondary spindle is active in G71 line W change to W *-1<p>
-<p>Corrected coordinates output (I hope it works in other scenarios too...)<p>
-<p>When Flood is on M03/M04 => M13/M14<p>
-<p>When left-tapping selected it will output M28 and when right-tapping selected it will output M27 and for the rest is still M29<p>
+
+<h3>Commented:</h3>
+<ul>
+    <li>In subspindle grab removed(commented) unwated code (Torque skip on/off & G31 P98)</li>
+    <li>Commented most if not all lines which include "H"</li>
+</ul>
+
+<h3>Added:</h3>
+<ul>
+    <li>Added G94 in eject part</li>
+    <li>Added G00 A0 in a if statemeent in Eject Part</li>
+    </li>Added Sub spindle retun AND Return to ABS PR in Part Eject end.</li>
+    </li>Add B0(SUB) or C0(MAIN) after(C=#)to help the machine find its axis</li>
+</ul>
+
+<h3>Change values when necessary conditions are met:</h3>
+<ul>
+    <li> H0. => B0./C0. when Secondary spindle or Main spindle selected</li>
+    <li>Export description, ZMIN=-# when Main spindle is selected or else ZMAX=+#</li>
+    <li>Removed in export M31 & M32 when secondary spindle is selected</li>
+    <li>When left-tapping is selected it will output M28 and when right-tapping is selected it will output M27 and for the rest it is still M29</li>
+    <li>When Flood is selected M03/M04 => M13/M14</li>
+    <li>When secondary spindle is selected C0. => B0.</li>
+    <li>Insert A0 after G55 and G00 when secondary spindle is active</li>
+    <li>If secondary spindle is active in line the with G71, change W to W*-1</li>
+</ul>
