@@ -31,4 +31,4 @@
 <p>If secondary spindle is active in G71 line W change to W *-1<p>
 <p>Corrected coordinates output (I hope it works in other scenarios too...)<p>
 <p>When Flood is on M03/M04 => M13/M14<p>
-<p>When left-tapping selected it will output M27 and when right-tapping selected it will output M28 and for the rest is still M29<p>
+<p>When left-tapping selected it will output M28 and when right-tapping selected it will output M27 and for the rest is still M29<p>
