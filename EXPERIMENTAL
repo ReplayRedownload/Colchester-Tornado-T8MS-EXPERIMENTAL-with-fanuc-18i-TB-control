@@ -865,6 +865,16 @@ function onOpen() {
 
     var tools = getToolTable();
     if (tools.getNumberOfTools() > 0) {
+      var ZMAXorZMIN;//Local var to assign a value -AHF
+      var number;//Local var to assign a value 
+      //Added if else statement to decide if it will be ZMIN=-# when main spindle is active or else ZMAX=+#  
+      if(getSpindle(true)==SPINDLE_MAIN){//If main spindle is selected
+        ZMAXorZMIN = "ZMIN=";
+        var number = 1;
+      } else {
+        ZMAXorZMIN = "ZMAX=";
+        var number = -1;//To flip the value
+      }
       for (var i = 0; i < tools.getNumberOfTools(); ++i) {
         var tool = tools.getTool(i);
         var compensationOffset = tool.isTurningTool() ? tool.compensationOffset : tool.lengthOffset;
@@ -872,9 +882,9 @@ function onOpen() {
           (tool.diameter != 0 ? "D=" + spatialFormat.format(tool.diameter) + " " : "") +
           (tool.isTurningTool() ? localize("NR") + "=" + spatialFormat.format(tool.noseRadius) : localize("CR") + "=" + spatialFormat.format(tool.cornerRadius)) +
           (tool.taperAngle > 0 && (tool.taperAngle < Math.PI) ? " " + localize("TAPER") + "=" + taperFormat.format(tool.taperAngle) + localize("deg") : "") +
-          (zRanges[tool.number] ? " - " + localize("ZMIN") + "=" + spatialFormat.format(zRanges[tool.number].getMinimum()) : "") +
+          (zRanges[tool.number] ? " - " + ZMAXorZMIN + spatialFormat.format(zRanges[tool.number].getMinimum())*number : "") + //Replaced /* localize("ZMIN") + "=" */ with ZMAXorZMIN
           " - " + localize(getToolTypeName(tool.type) +
-          " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL ", so you can tell it is EXPERIMENTAL -AHF
+          " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL ", so you can tell it is EXPERIMENTAL 
         writeComment(comment);
       }
     }
