@@ -9,15 +9,19 @@
 <p>https://cam.autodesk.com/posts/post.php?name=samsung%20mill-turn%20fanuc</p>
 
 # Changes:
-<p>G99 => G95</p>
-<p>G98 => G94</p>
-<p>G17 => G18</p>
-<p>G19 => G18<p>
-<p>G83.5 => G83</p>
-<p>M00 => M03<p>
+
+<h3>Changing export values:</h3>
+<ul>
+  <li>G99 => G95;</li>
+  <li>G98 => G94;</li>
+  <li>G17 => G18;</li>
+  <li>G83.5 => G83;</li>
+  <li>G83.6 => G83;</li>
+  <li>M00 => M03;</li>
+  <li>G54 => G55 in Eject Part;</li>
+   
+</ul>
 <p>Added G94 in eject part<p>
-<p>G54 => G55 in Eject Part<p>
-<P>G17 => G18 in Eject Part<p>
 <p>Changed H0. (Primary spindle incremental adress) => C0. (When primary spindle is active, but there won't be any H0.) OR B0. (When secondary spindle is active, but there won't be any H0.)</p>
 <p>Changed G-Code export description for better differentiating (Only addeed a word...)</p>
 <p>Removed M31 & M32 when secondary spindle is active<p>
