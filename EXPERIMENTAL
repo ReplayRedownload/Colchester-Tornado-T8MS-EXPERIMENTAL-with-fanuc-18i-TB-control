@@ -23,7 +23,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-description = "Colchester Tornado T8MS EXPERIMENTAL with fanuc 18i-TB control";
+description = "C. T. T8MS EXPERIMENTAL with fanuc 18i-TB control"; //Changed description, so it is easier to tell this is experimental -AHF
+//Expect to have bugs, errors and intersting results with this experimental post proccessor... -AHF
 vendor = "Colchester Machine Tools";
 EditedByPersonFoundInUrl = "https://www.andrejsgelins@gmail.com";
 legal = "Copyright (C) 2012-2021 by Autodesk, Inc.";
@@ -408,7 +409,6 @@ var activeMovements; // do not use by default
 var currentFeedId;
 var previousSpindle = SPINDLE_MAIN;
 var activeSpindle = SPINDLE_MAIN;
-
 var partCutoff = false;
 var transferType;
 var transferUseTorque;
@@ -438,11 +438,18 @@ var machineState = {
   currentBAxisOrientationTurning: new Vector(0, 0, 0)
 };
 
-//Custom vars -AHF
-var exist;
-var counterboring;
-var savez; var savex; var savem;
-var InvertAxes;
+//Custom vars. -AHF
+//These custom vars are used to help automate the changes in export when something is changed in Autodesk Fusion 360
+
+//Boolean values, true or false
+var exist; //It is being used to help when to it is needed to insert an A0 (A AXIS) when secondary spindle is active
+var counterboring; //It is being used in "counter-boring to tell change exported coordinates and other values"
+var InvertAxes; //Make this var to true if you want in "counter-boring" and "left-tapping" activate an if statement, which does: x=z
+
+//Int values (numbers) -AHF
+var savez; //Saves a local value initialPosiion.z for later use in the code (It is being used)
+var savex; 
+var savem; //Saves a local value m for which is to be used to change M03/M04 => M13/M14, when Flood is active
 
 function getCode(code, spindle) {
   switch (code) {
@@ -493,17 +500,17 @@ function getCode(code, spindle) {
       machineState.mainSpindleIsActive = false;
       machineState.liveToolIsActive = false;
       return 103;
-    case SPINDLE_LIVE:
-      if (savem==8) {
+    case SPINDLE_LIVE://Added an if else statement to change export values if Flood is active in Autodesk Fusion 360 -AHF
+      if (savem==8) {//If Flood is active
         machineState.liveToolIsActive = true;
         machineState.mainSpindleIsActive = false;
         machineState.subSpindleIsActive = false;
-        return 13;
+        return 13;//Alternative value, M13
       } else {
         machineState.liveToolIsActive = true;
         machineState.mainSpindleIsActive = false;
         machineState.subSpindleIsActive = false;
-        return 3;
+        return 3;//Orignal value, M03
       }
     }
     break;
@@ -519,17 +526,17 @@ function getCode(code, spindle) {
       machineState.mainSpindleIsActive = false;
       machineState.liveToolIsActive = false;
       return 104;
-    case SPINDLE_LIVE:
-      if (savem==8) {
+    case SPINDLE_LIVE://Added an if else statement to change export values if Flood is active in Autodesk Fusion 360 -AHF
+      if (savem==8) {//If Flood is active
           machineState.liveToolIsActive = true;
           machineState.mainSpindleIsActive = false;
           machineState.subSpindleIsActive = false;
-          return 14;
+          return 14;//Alternative value, M14
       } else {
         machineState.liveToolIsActive = true;
         machineState.mainSpindleIsActive = false;
         machineState.subSpindleIsActive = false;
-        return 4;
+        return 4;//Original value, M04
       }
     }
     break;
@@ -863,7 +870,7 @@ function onOpen() {
           (tool.taperAngle > 0 && (tool.taperAngle < Math.PI) ? " " + localize("TAPER") + "=" + taperFormat.format(tool.taperAngle) + localize("deg") : "") +
           (zRanges[tool.number] ? " - " + localize("ZMIN") + "=" + spatialFormat.format(zRanges[tool.number].getMinimum()) : "") +
           " - " + localize(getToolTypeName(tool.type) +
-          " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL " -AHF
+          " --- EXPERIMENTAL"); //Added comment " --- EXPERIMENTAL ", so you can tell it is EXPERIMENTAL -AHF
         writeComment(comment);
       }
     }
@@ -1168,16 +1175,17 @@ function setWorkPlane(abc) {
 
   onCommand(COMMAND_UNLOCK_MULTI_AXIS);
 
-  if(getSpindle(true)==SPINDLE_SUB){//Added a if else statement and BFormat & CFormat -AHF
-    BFormat = createFormat({prefix:"B", decimals:3, forceDecimal:true, scale:DEG})
+//Added an if else statement,when secondary spindle is active it will export altermnative values, and BForma -AHF
+  if(getSpindle(true)==SPINDLE_SUB){//Alternative value
+    var BFormat = createFormat({prefix:"B", decimals:3, forceDecimal:true, scale:DEG})//Local var
     writeBlock(
       gMotionModal.format(0),
       conditional(machineConfiguration.isMachineCoordinate(0), aOutput.format(abc.x)),
       conditional(machineConfiguration.isMachineCoordinate(1), bFormat.format(abc.y)),
       conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z)),
-      BFormat.format(abc.z*-1)
+      BFormat.format(abc.z*-1)//Export corrected coordinate
     )
-  }else{
+  }else{//Original value
     writeBlock(
       gMotionModal.format(0),
       conditional(machineConfiguration.isMachineCoordinate(0), aOutput.format(abc.x)),
@@ -1185,9 +1193,12 @@ function setWorkPlane(abc) {
       conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z))
     )
   }
-  if (getSpindle(true)==SPINDLE_SUB){
-    writeBlock("A0 (A AXIS TO WORK ZERO)")//Insert A0 if sub spindle is active -AHF
+
+  //Added an if statement -AHF
+  if (getSpindle(true)==SPINDLE_SUB){//If secondary spindle is active, it will insert A0 and a comment
+    writeBlock("A0 (A AXIS TO WORK ZERO)")
   }
+
   onCommand(COMMAND_LOCK_MULTI_AXIS);
 
   currentWorkPlaneABC = abc;
@@ -1403,10 +1414,10 @@ function invertAxes(activate, polarMode) {
     xOutput = createVariable({prefix:"X"}, xFormat);
     yOutput = createVariable({onchange: function() {yAxisIsRetracted = false;}, prefix:"Y"}, yFormat);
     zOutput = createVariable({prefix:"Z"}, zFormat);
-    if (getSpindle(true)==SPINDLE_MAIN) {//Added if else statement to change when primary or secondary spindle is active -AHF
-      cOutput = createVariable({prefix:"C"}, cFormat);
+    if (getSpindle(true)==SPINDLE_MAIN) {//Added a if else statement to change when secondary spindle is active or else-AHF
+      cOutput = createVariable({prefix:"C"}, cFormat);//Original value, C0
     } else {
-      cOutput = createVariable({prefix:"B"}, cFormat);
+      cOutput = createVariable({prefix:"B"}, cFormat);//Alternative value, B0
     }
     iOutput = createReferenceVariable({prefix:"I", force:true}, spatialFormat);
     jOutput = createReferenceVariable({prefix:"J", force:true}, spatialFormat);
@@ -1560,8 +1571,8 @@ function onSection() {
   
   // invert axes for secondary spindle
   if (getSpindle(true) == SPINDLE_SUB) {
-    invertAxes(true, false); // polar mode has not been enabled yet //Changed (true, false) to (true, true) to active polar mode -AHF
-    var InvertAxes = true;
+    invertAxes(true, false); // polar mode has not been enabled yet
+    // InvertAxes = true;//For future plans, maybe ``\(*_*)/`` -AHF
   }
 
   // activate Y-axis
@@ -1620,10 +1631,10 @@ function onSection() {
       var plane;
       switch (getMachiningDirection(currentSection)) {
       case MACHINING_DIRECTION_AXIAL:
-        plane = 18; //Changed getG17Code() to 18, so that all G17 will always become G18 -AHF
+        plane = 18; //Changed getG17Code() to 18 (G17 =>G18), so there is no G17 in the export  -AHF
         break;
       case MACHINING_DIRECTION_RADIAL:
-        plane = 18;
+        plane = 18; //Changed 19 to 18 (G19 => G18), so there is no G19 in the export  -AHF -AHF
         break;
       case MACHINING_DIRECTION_INDEXING:
         plane = getG17Code();
@@ -1639,15 +1650,18 @@ function onSection() {
       // writeBlock(wcsOut, mFormat.format(getCode("SET_SPINDLE_FRAME", getSpindle(true))));
       writeBlock(wcsOut);
       writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
-      // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //Commented -AHF
-      if (SPINDLE_MAIN==getSpindle(true)) {
-        writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
-      } else {
-        writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //If sub spindle is active (it's working... somehow...) -AHF
+      // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //Commented this line, so their is no H0. in the export -AHF
+      //Added an if else statement to insert value if main spindle is active or else -AHF
+      if (SPINDLE_MAIN==getSpindle(true)) {//If main spindle active
+        writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //It will export C0. and a comment
+      } else {//Anything else
+        writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //It will export B0. and a comment
         exist = true;
       }
-      if(getSpindle(true)==SPINDLE_SUB && wcsOut=="G55" && exist!=true){
-        writeBlock("A0 (A AXIS TO WORK ZERO)")// Insert A0 if sub spindle is active and if G55 exists and if there is no previous A0 (It's a mess...) -AHF
+
+      //Added an if statement -AHF
+      if(getSpindle(true)==SPINDLE_SUB && wcsOut=="G55" && exist!=true){//Insert A0 and a comment if secondary spindle is active and if G55 exists and if there is no previous A0 (It's a mess...)
+        writeBlock("A0 (A AXIS TO WORK ZERO)")
       }
       // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
       if (!machineState.usePolarMode && !machineState.useXZCMode && !currentSection.isMultiAxis()) {
@@ -1859,8 +1873,9 @@ function onSection() {
       if (gotBAxis) {
         bOutput.reset();
         writeBlock(gMotionModal.format(0), bOutput.format(getB(abc, currentSection)));
-        if (getSpindle(true)==SPINDLE_SUB && wcsOut=="G55"){
-          writeBlock("A0 (A AXIS TO WORK ZERO)")//Insert A0 if sub spindle is active and if there is G55 -AHF
+        //Addded an if statement _AHF
+        if (getSpindle(true)==SPINDLE_SUB && wcsOut=="G55"){//Insert A0 and comment if secondary spindle is active and if there is G55 -AHF
+          writeBlock("A0 (A AXIS TO WORK ZERO)")
         }
         machineState.currentBAxisOrientationTurning = abc;
       }
@@ -1888,18 +1903,20 @@ function onSection() {
         conditional(machineState.useXZCMode, cOutput.format(getC(initialPosition.x, initialPosition.y)))
       );
     } else {
-        if(exist!=true){//Added if else statement so coordinates change places when needed -AHF
-          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/* + " (VALUE1)" */);//OG, Uncomment when needed -AHF
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (VALUE2)" */);//OG ,Uncomment when needed -AHF
+      //Added if else statement so coordinates change places when needed -AHF
+      //This is a complete mess, but it works...
+        if(exist!=true){
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/* + " (VALUE1)" */);//Original values, Uncomment when needed
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (VALUE2)" */);//Orignal values ,Uncomment when needed
         } else {
-          if (getCode("START_SPINDLE_CW",getSpindle())==3){//Added if else statemend so certain coordinates changed places -AHF
-            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)/* + " (DIF1 VALUE1)" */);//Uncomment when needed -AHF
-            writeBlock(gMotionModal.format(0), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF1 VALUE2)" */);//Uncomment when needed -AHF
+          if (getCode("START_SPINDLE_CW",getSpindle())==3){//Added if else statemend so certain coordinates changed places
+            writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)/* + " (DIF1 VALUE1)" */);//Uncomment when needed
+            writeBlock(gMotionModal.format(0), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF1 VALUE2)" */);//Uncomment when needed
             savex=initialPosition.x;
             savez=initialPosition.z;
           } else {
           writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/* + " (DIF2 VALUE1)" */);//Uncomment when needed -AHF
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF2 VALUE2)" */);//Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF2 VALUE2)" */);//Uncomment when needed
           }
         }
       }
@@ -2151,10 +2168,11 @@ function setPolarMode(activate) {
   if (activate) {
     cOutput.enable();
     cOutput.reset();
-    if(getSpindle(true)==SPINDLE_SUB){
-      writeBlock(gMotionModal.format(0), 'B0.'); // set B-axis to 0 -AHF
+    //Added an if else statement -AHF
+    if(getSpindle(true)==SPINDLE_SUB){//If secondary spindle is active
+      writeBlock(gMotionModal.format(0), 'B0.'); //Alternative value, set B-axis to 0
     } else {
-      writeBlock(gMotionModal.format(0), cOutput.format(0)); // set C-axis to 0 to avoid G112 issues
+      writeBlock(gMotionModal.format(0), cOutput.format(0)); //Original value, set C-axis to 0 to avoid G112 issues
     }
     writeBlock(gPolarModal.format(getCode("POLAR_INTERPOLATION_ON", getSpindle(false)))); // command for polar interpolation
     // writeBlock(gPlaneModal.format(getG17Code()));
@@ -2337,21 +2355,23 @@ function onRapid(_x, _y, _z) {
         writeBlock(gMotionModal.format(1), x, y, z, getFeed(highFeed));
         resetFeed = false;
       } else {
-        if(getSpindle(true)==SPINDLE_SUB){
+        //Added if else statement so coordinates change places when needed -AHF
+        //This is a complete mess, but it works...
+        if(getSpindle(true)==SPINDLE_SUB){//If secondary spindle is active
           if(getCode("START_SPINDLE_CW",getSpindle(false))==3){
-            writeBlock(gMotionModal.format(0), xOutput.format(savez)/*  +" (DIF VALUE3)" */);//Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), xOutput.format(savez)/*  +" (DIF VALUE3)" */);//Uncomment when needed
           }
         } else {
-          writeBlock(gMotionModal.format(0), x, y, z /* +" (VALUE3) "*/);//OG, Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), x, y, z /* +" (VALUE3) "*/);//OG, Uncomment when needed
           // forceFeed();
           }
           if(exist!=true){
-            writeBlock(gMotionModal.format(0), x, y, z /* +" (DIF2 VALUE3)" */);//OG, Uncomment when needed -AHF
+            writeBlock(gMotionModal.format(0), x, y, z /* +" (DIF2 VALUE3)" */);//Original value, Uncomment when needed
           } else {
             if(getCode("START_SPINDLE_CW",getSpindle())==3){
-              //This intentional -AHF
+              //This is left empty, so to get rid of unnecessary values
             } else{
-              writeBlock(gMotionModal.format(0), x, y, z/*  +" (DIF3 VALUE3)" */);//OG, Uncomment when needed -AHF
+              writeBlock(gMotionModal.format(0), x, y, z/*  +" (DIF3 VALUE3)" */);//Original value, Uncomment when needed
             }
           }
         }
@@ -2511,7 +2531,7 @@ function onLinear(_x, _y, _z, feed) {
       if (machineState.isTurningOperation) {
         writeBlock(gPlaneModal.format(18));
       } else if (isSameDirection(currentSection.workPlane.forward, new Vector(0, 0, 1))) {
-        writeBlock(gPlaneModal.format(18)); //Changed getG17Code() to 18, so that all G17 will always become G18 -AHF
+        writeBlock(gPlaneModal.format(18)); //Changed getG17Code() to 18 (G17 => G18), so there is not G17 in export -AHF
       } else if (Vector.dot(currentSection.workPlane.forward, new Vector(0, 0, 1)) < 1e-7) {
         writeBlock(gPlaneModal.format(19));
       } else {
@@ -2934,8 +2954,8 @@ function onCircular(clockwise, cx, cy, cz, x, y, z, feed) {
       return;
     }
     switch (getCircularPlane()) {
-    case PLANE_XY:
-      writeBlock(gPlaneModal.format(18), gMotionModal.format(directionCode), xOutput.format(x), yOutput.format(y), zOutput.format(z), iOutput.format(cx - start.x, 0), jOutput.format(cy - start.y, 0), getFeed(feed));//Changed getG17Code() to 18 -AHF
+    case PLANE_XY://Changed getG17Code() to 18 (G17 => G18), so there is no G17 in export -AHF
+      writeBlock(gPlaneModal.format(18), gMotionModal.format(directionCode), xOutput.format(x), yOutput.format(y), zOutput.format(z), iOutput.format(cx - start.x, 0), jOutput.format(cy - start.y, 0), getFeed(feed));
       break;
     case PLANE_ZX:
       if (machineState.usePolarMode) {
@@ -2964,8 +2984,8 @@ function onCircular(clockwise, cx, cy, cz, x, y, z, feed) {
       r = -r; // allow up to <360 deg arcs
     }
     switch (getCircularPlane()) {
-    case PLANE_XY:
-      writeBlock(gPlaneModal.format(18), gMotionModal.format(directionCode), xOutput.format(x), yOutput.format(y), zOutput.format(z), "R" + rFormat.format(r), getFeed(feed));//Changed getG17Code() to 18 -AHF
+    case PLANE_XY://Changed getG17Code() to 18 (G17 => G18), so there is no G17 in export -AHF
+      writeBlock(gPlaneModal.format(18), gMotionModal.format(directionCode), xOutput.format(x), yOutput.format(y), zOutput.format(z), "R" + rFormat.format(r), getFeed(feed));
       break;
     case PLANE_ZX:
       if (machineState.usePolarMode) {
@@ -3072,8 +3092,8 @@ function onCycle() {
           var code = getCode("SPINDLE_SYNCHRONIZATION_OFF", getSpindle(true));
           writeBlock(mFormat.format(code), formatComment("CANCEL SYNCHRONIZATION"));
         }
-        onCommand(COMMAND_STOP_SPINDLE);//Moved this below the if else statement, the one above ^ -AHF
-        writeBlock(mFormat.format(getCode("STOP_SPINDLE", getSecondarySpindle())));//Moved this below the if else statement, the one above ^ -AHF
+        onCommand(COMMAND_STOP_SPINDLE);//Moved this below the if else statement, the one above ^, so in export to change value locations -AHF
+        writeBlock(mFormat.format(getCode("STOP_SPINDLE", getSecondarySpindle())));//Moved this below the if else statement, the one above, so in export to change value locations ^ -AHF
         retractSubSpindle();
       } else {
         writeBlock(mFormat.format(getCode("CLAMP_CHUCK", getSpindle(true))), formatComment("CLAMP MAIN CHUCK"));
@@ -3135,7 +3155,7 @@ function onCycle() {
         writeBlock(
           gSpindleModeModal.format(spindleMode),
           sOutput.format(spindleSpeed),
-          mFormat.format(3)//Changed transferCodes.direction to 3 -AHF
+          mFormat.format(3)//Changed transferCodes.direction to 3 (M00 => M03) -AHF
         );
       }
       // clean out chips
@@ -3150,9 +3170,10 @@ function onCycle() {
       // writeBlock(mInterferModal.format(getCode("INTERFERENCE_CHECK_OFF", getSpindle(true))));
       gMotionModal.reset();
       writeBlock(gMotionModal.format(0), conditional(cycle.useMachineFrame == 1, gFormat.format(53)), barOutput.format(cycle.feedPosition));
-            
+      
+      //Commented this if statetement, so it doesn't show this value in the export, uncomment when you need it -AHF
       // if (transferUseTorque) {
-      //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_ON", getSpindle(true))), formatComment("TORQUE SKIP ON"));//Commented -AHF
+      //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_ON", getSpindle(true))), formatComment("TORQUE SKIP ON"));
       // }
       writeBlock(
         gMotionModal.format(1),
@@ -3161,6 +3182,8 @@ function onCycle() {
         barOutput.format(cycle.chuckPosition),
         getFeed(cycle.feedrate)
       );
+
+      //Commented this if statetement, so it doesn't show this value in the export, uncomment when you need it -AHF
       // if (transferUseTorque) {
       //   writeBlock(mFormat.format(getCode("TORQUE_SKIP_OFF", getSpindle(true))), formatComment("TORQUE SKIP OFF"));//Commented -AHF
       // }
@@ -3192,6 +3215,7 @@ function getCommonCycle(x, y, z, r, includeRcode) {
     return [xOutput.format(getModulus(x, y)), cOutput.format(getCClosest(x, y, cOutput.getCurrent())),
       zOutput.format(z),
       raptoS];
+  //Added an else if statement to export corrected values
   } else if (counterboring==true){//Added this -AHF
     return [xOutput.format(x), yOutput.format(y),
       raptoS];
@@ -3329,7 +3353,8 @@ function onCyclePoint(x, y, z) {
   // clamp the C-axis if necessary
   // the C-axis is automatically unclamped by the controllers during cycles
   var lockCode = "";
-  if (!machineState.axialCenterDrilling && !machineState.isTurningOperation && (getSpindle(true)!=SPINDLE_SUB)) {//Added && (getSpindle(true)!=SPINDLE_SUB), so M31 (maybe also M32) will not appear when secondary spindle is active -AHF
+  //Added && (getSpindle(true)!=SPINDLE_SUB), so M31 (maybe also M32) will not appear when secondary spindle is active -AHF
+  if (!machineState.axialCenterDrilling && !machineState.isTurningOperation && (getSpindle(true)!=SPINDLE_SUB)) {
     lockCode = mFormat.format(getCode("LOCK_MULTI_AXIS", getSpindle(true)));
   } 
 
@@ -3343,10 +3368,10 @@ function onCyclePoint(x, y, z) {
     switch (cycleType) {
     case "drilling":
     case "counter-boring":
-      if(InvertAxes==true){
-        x=z;//Added this -AHF idk
+      if(InvertAxes==true){//In custom vars make this value true if you want to switch value places -AHF
+        x=z;
       }      
-      counterboring = true;//Added and Assigned to custom var value true -AHF
+      counterboring = true;//Added and Assigned to custom var value true
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
       writeBlock(
@@ -3364,7 +3389,7 @@ function onCyclePoint(x, y, z) {
         writeCycleClearance(plane, cycle.clearance);
         localZOutput.reset();
         writeBlock(
-          gCycleModal.format(plane == 19 ? 87 : 83), //Changed 83.5 to 83, it was changed, since the machine could not read 83.5 (I think...) -AHF
+          gCycleModal.format(plane == 19 ? 87 : 83), //Changed 83.5 to 83 (G83.5 => G83), since the machine could not read G83.5-AHF
           getCommonCycle(x, y, z, rapto, true),
           conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
           conditional(P > 0, pOutput.format(P)),
@@ -3377,7 +3402,7 @@ function onCyclePoint(x, y, z) {
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
       writeBlock(
-        gCycleModal.format(plane == 19 ? 87 : 83),
+        gCycleModal.format(plane == 19 ? 87 : 83), //Changed 83.6 to 83 (G83.5 => G83), since the machine could not read G83.5-AHF
         getCommonCycle(x, y, z, rapto, true),
         conditional(cycle.incrementalDepth > 0, peckOutput.format(cycle.incrementalDepth)),
         conditional(P > 0, pOutput.format(P)),
@@ -3402,14 +3427,14 @@ function onCyclePoint(x, y, z) {
         writeBlock(mFormat.format(94));
       }
 */    
-      if(InvertAxes==true){
-      x=z;//Added this -AHF idk
+      if(InvertAxes==true){//In custom vars make this value true if you want to switch value places -AHF
+      x=z;
       }
       writeBlock(
         gCycleModal.format(gCode),
         getCommonCycle(x, y, z, rapto, true),
         conditional(P > 0, pOutput.format(P)),
-        pitchOutput.format(F/100),
+        pitchOutput.format(F/100),//Added /100, so to correct the export value, change it as you see fit -AHF
         lockCode
       );
       break;
@@ -3516,15 +3541,16 @@ function onCyclePathEnd() {
       (verticalPasses ? "W" : "U") + spatialFormat.format(cycle.depthOfCut),
       "R" + spatialFormat.format(cycle.retractLength)
     );
-    if(getSpindle(true)==SPINDLE_SUB){//Added if else statement in the if part W# is now W-# -AHF
+    //Added if else statement -AHF
+    if(getSpindle(true)==SPINDLE_SUB){//Alternative value,If secondary spindle is active
       writeBlock(gFormat.format(verticalPasses ? 72 : 71),
         "P" + (getStartEndSequenceNumber(cyclePath, true)),
         "Q" + (getStartEndSequenceNumber(cyclePath, false)),
         "U" + xFormat.format(cycle.xStockToLeave),
-        "W" + -1*spatialFormat.format(cycle.zStockToLeave),//Added -1* -AHF
+        "W" + -1*spatialFormat.format(cycle.zStockToLeave),//Added -1*, so it exports the value opposite
         getFeed(cycle.cutfeedrate)
       );
-    } else {//OG -AHF
+    } else {//Orginal value
       writeBlock(gFormat.format(verticalPasses ? 72 : 71),
         "P" + (getStartEndSequenceNumber(cyclePath, true)),
         "Q" + (getStartEndSequenceNumber(cyclePath, false)),
@@ -3652,22 +3678,22 @@ function setCoolant(coolant) {
   switch (coolant) {
   case COOLANT_FLOOD:
     m = 8;
-    savem = m; //Save m -AHF
+    savem = m; //Save m to global var, so to tell if Flood is active -AHF
     break;
   case COOLANT_AIR_THROUGH_TOOL:
     m = getCode("COOLANT_AIR_THROUGH_TOOL", getSpindle(true));
-    savem = m;
+    savem = m; //Save m to global var -AHF
     break;
   case COOLANT_AIR:
     m = getCode("COOLANT_AIR_ON", getSpindle(true));
-    savem = m;
+    savem = m; //Save m to global var -AHF
     break;
   default:
     warning(localize("Coolant not supported."));
     if (currentCoolantMode == COOLANT_OFF) {
       return;
     }
-    savem = m;
+    savem = m; //Save m to global var -AHF
     coolant = COOLANT_OFF;
     m = getCode("COOLANT_OFF", getSpindle(true));
   }
@@ -3759,12 +3785,12 @@ function onCommand(command) {
   case COMMAND_COOLANT_ON:
     setCoolant(COOLANT_FLOOD);
     break;
-  case COMMAND_LOCK_MULTI_AXIS://Added if statement, so M31 does not appear when secondary spindle is active -AHF
+  case COMMAND_LOCK_MULTI_AXIS://Added an if statement, so M31 does not appear when secondary spindle is active -AHF
     if(getSpindle(true)!=SPINDLE_SUB){
       writeBlock(cAxisBrakeModal.format(getCode("LOCK_MULTI_AXIS", getSpindle(true))));
     }
     break;
-  case COMMAND_UNLOCK_MULTI_AXIS://Added if statement, so M32 does not appear when secondary spindle is active -AHF
+  case COMMAND_UNLOCK_MULTI_AXIS://Added an if statement, so M32 does not appear when secondary spindle is active -AHF
     if(getSpindle(true)!=SPINDLE_SUB){
       writeBlock(cAxisBrakeModal.format(getCode("UNLOCK_MULTI_AXIS", getSpindle(true))));
     }
@@ -3883,11 +3909,12 @@ function ejectPart() {
   if (!getProperty("optimizeCaxisSelect")) {
     cAxisEngageModal.reset();
   }
+  //Changed exported results -AHF
   writeBlock(
-    gFormat.format(53 + currentWorkOffset + 1), //Added +1, so to make it G55 -AHF
-    gFormat.format(18),//Added G18 -AHF
-    gFeedModeModal.format(getCode("FEED_MODE_MM_MIN", getSpindle(false))),//Moved it 2 lines below -AHF
-    // gPlaneModal.format(getG17Code()),//Commented -AHF
+    gFormat.format(53 + currentWorkOffset + 1), //Added +1, so to make it G55 
+    gFormat.format(18),//Added G18
+    gFeedModeModal.format(getCode("FEED_MODE_MM_MIN", getSpindle(false))),//Moved it 2 lines below
+    // gPlaneModal.format(getG17Code()),//Commented, uncomment when you need this vakue (G17)
     cAxisEngageModal.format(getCode("DISABLE_C_AXIS", getSpindle(true)))
   );
   setCoolant(COOLANT_THROUGH_TOOL);
@@ -3921,7 +3948,7 @@ function ejectPart() {
   setCoolant(COOLANT_OFF);
   //Added retractSubSpindle function but with a changed valued -AHF
   if (getProperty("useG28")) {
-    writeBlock(gFormat.format(0), gFormat.format(28), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));//Changed gMotionModal(0) to gFormat(0) -AHF
+    writeBlock(gFormat.format(0), gFormat.format(28), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));//Changed gMotionModal(0) to gFormat(0) 
     writeBlock(gMotionModal.format(0), gFormat.format(90),  formatComment("RETURN TO ABS PR"));
   } else {
     writeBlock(gMotionModal.format(0), gFormat.format(53), gFormat.format(91),  barOutput.format(0), formatComment("SUB SPINDLE RETURN"));
@@ -3945,7 +3972,7 @@ function engagePartCatcher(engage) {
 function onSectionEnd() {
 
   if (machineState.usePolarMode) {
-    setPolarMode(false); // disable polar interpolation mode //Changed (false) to (true) -AHF
+    setPolarMode(false); // disable polar interpolation mode
   }
 
   // cancel SFM mode to preserve spindle speed
