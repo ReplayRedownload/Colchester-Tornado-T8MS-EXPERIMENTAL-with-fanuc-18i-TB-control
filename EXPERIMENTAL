@@ -574,9 +574,9 @@ function getCode(code, spindle) {
     return 121;
   case "TORQUE_SKIP_OFF":
     return 122;
-  case "LEFT_TAPPING"://Added left-tapping -AHF
-    return 27;
   case "RIGHT_TAPPING"://Added rigth-tapping -AHF
+    return 27;
+  case "LEFT_TAPPING"://Added left-tapping -AHF
     return 28;
   case "RIGID_TAPPING":
     return 29;
@@ -3749,9 +3749,9 @@ function startSpindle(tappingMode, forceRPMMode, initialPosition, rpm) {
   if (tappingMode) {
     //Added an else if statement to tell whether if left-tapping or right-tapping or else is selected -AHF
     if (tapping == hasParameter("operation:cycleType") && (getParameter("operation:cycleType") == "left-tapping")) {//If left-tapping is selected
-      spindleDir = mFormat.format(getCode("LEFT_TAPPING", getSpindle(false))); //Exports M27
+      spindleDir = mFormat.format(getCode("LEFT_TAPPING", getSpindle(false))); //Exports M28
     } else if (tapping == hasParameter("operation:cycleType") && (getParameter("operation:cycleType") == "right-tapping")) {//If right-tapping is selected
-      spindleDir = mFormat.format(getCode("RIGHT_TAPPING", getSpindle(false))); //Exports M28
+      spindleDir = mFormat.format(getCode("RIGHT_TAPPING", getSpindle(false))); //Exports M27
     } else {
       spindleDir = mFormat.format(getCode("RIGID_TAPPING", getSpindle(false))); //Exports M20
     }
