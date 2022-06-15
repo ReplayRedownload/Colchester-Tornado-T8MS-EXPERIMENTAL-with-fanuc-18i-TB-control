@@ -445,7 +445,6 @@ var machineState = {
 var exist; //It is being used to help when to it is needed to insert an A0 (A AXIS) when secondary spindle is active
 var counterboring; //It is being used in "counter-boring to tell change exported coordinates and other values"
 var InvertAxes; //Make this var to true if you want in "counter-boring" and "left-tapping" activate an if statement, which does: x=z
-var divider;
 
 //Int values (numbers) -AHF
 var savez; //Saves a local value initialPosiion.z for later use in the code (It is being used)
