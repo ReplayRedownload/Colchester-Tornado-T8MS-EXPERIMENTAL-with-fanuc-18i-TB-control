@@ -445,6 +445,7 @@ var machineState = {
 var exist; //It is being used to help when to it is needed to insert an A0 (A AXIS) when secondary spindle is active
 var counterboring; //It is being used in "counter-boring to tell change exported coordinates and other values"
 var InvertAxes; //Make this var to true if you want in "counter-boring" and "left-tapping" activate an if statement, which does: x=z
+var divider;
 
 //Int values (numbers) -AHF
 var savez; //Saves a local value initialPosiion.z for later use in the code (It is being used)
@@ -1663,7 +1664,7 @@ function onSection() {
       }
       // writeBlock(wcsOut, mFormat.format(getCode("SET_SPINDLE_FRAME", getSpindle(true))));
       writeBlock(wcsOut);
-      // writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
+      writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
       // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //Commented this line, so their is no H0. in the export -AHF
       //Added an if else statement to insert value if main spindle is active or else
         if (SPINDLE_MAIN==getSpindle(true)) {//If main spindle active
@@ -1809,8 +1810,8 @@ function onSection() {
 
     // Turn on coolant
     setCoolant(tool.coolant);
+    
     if(exist==true){
-      writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
       if (SPINDLE_MAIN==getSpindle(true)) {//If main spindle active
         writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //It will export C0. and a comment
       } else {//Anything else
@@ -1938,8 +1939,8 @@ function onSection() {
             savex=initialPosition.x;
             savez=initialPosition.z;
           } else {
-          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.z)/* + " (DIF2 VALUE1)" */);//Uncomment when needed -AHF
-          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.x), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF2 VALUE2)" */);//Uncomment when needed
+          writeBlock(gMotionModal.format(0), zOutput.format(initialPosition.x*-1)/* + " (DIF2 VALUE1)" */);//Uncomment when needed -AHF
+          writeBlock(gMotionModal.format(0), xOutput.format(initialPosition.z), conditional(gotYAxis, yOutput.format(initialPosition.y))/* + " (DIF2 VALUE2)" */);//Uncomment when needed
           }
         }
       }
@@ -2382,19 +2383,19 @@ function onRapid(_x, _y, _z) {
         //This is a complete mess, but it works...
         if(getSpindle(true)==SPINDLE_SUB){//If secondary spindle is active
           if(getCode("START_SPINDLE_CW",getSpindle(false))==3){
-            writeBlock(gMotionModal.format(0), xOutput.format(savez)/*  +" (DIF VALUE3)" */);//Uncomment when needed
+            writeBlock(gMotionModal.format(0), xOutput.format(savez) /* +" (DIF VALUE3)" */);//Uncomment when needed
           }
         } else {
-          writeBlock(gMotionModal.format(0), x, y, z /* +" (VALUE3) "*/);//OG, Uncomment when needed
+          writeBlock(gMotionModal.format(0), x, y, z /* +" (VALUE3) " */);//OG, Uncomment when needed
           // forceFeed();
           }
           if(exist!=true){
-            writeBlock(gMotionModal.format(0), x, y, z /* +" (DIF2 VALUE3)" */);//Original value, Uncomment when needed
+            writeBlock(gMotionModal.format(0), x, z /* +" (DIF2 VALUE3)" */);//Original value, Uncomment when needed but without the y
           } else {
             if(getCode("START_SPINDLE_CW",getSpindle())==3){
               //This is left empty, so to get rid of unnecessary values
             } else{
-              writeBlock(gMotionModal.format(0), x, y, z/*  +" (DIF3 VALUE3)" */);//Original value, Uncomment when needed
+              writeBlock(gMotionModal.format(0), y, xOutput.format(_z)/*  +" (DIF3 VALUE3)" */);//Replaced z with xOutput.format(_z)
             }
           }
         }
@@ -3244,10 +3245,10 @@ function getCommonCycle(x, y, z, r, includeRcode) {
       raptoS];
   } else {
     if(exist==true){
-      return [xOutput.format(x),zOutput.format(z),
+      return [xOutput.format(x),/* zOutput.format(z), */
         raptoS];
     } else {
-      return [xOutput.format(x), yOutput.format(y),
+      return [/* xOutput.format(x),  */yOutput.format(y),
         zOutput.format(z),
         raptoS];
     }
@@ -3391,9 +3392,9 @@ function onCyclePoint(x, y, z) {
     switch (cycleType) {
     case "drilling":
     case "counter-boring":
-      if(InvertAxes==true){//In custom vars make this value true if you want to switch value places -AHF
+      // if(InvertAxes==true){//In custom vars make this value true if you want to switch value places -AHF
         x=z;
-      }      
+      // }      
       // counterboring = true;//Added and Assigned to custom var value true //Commented this value, since it was hiding some results, it was placed, si when polar mode is activated it will give us the wanted results (It is a mess...)
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
