@@ -1196,7 +1196,7 @@ function setWorkPlane(abc) {
       gMotionModal.format(0),
       conditional(machineConfiguration.isMachineCoordinate(0), aOutput.format(abc.x)),
       conditional(machineConfiguration.isMachineCoordinate(1), bFormat.format(abc.y)),
-      conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z)),
+      // conditional(machineConfiguration.isMachineCoordinate(2), cOutput.format(abc.z)), //Uncomment when needed
       BFormat.format(abc.z*-1)//Export corrected coordinate
     )
   }else{//Original value
@@ -1663,16 +1663,16 @@ function onSection() {
       }
       // writeBlock(wcsOut, mFormat.format(getCode("SET_SPINDLE_FRAME", getSpindle(true))));
       writeBlock(wcsOut);
-      writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
+      // writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
       // writeBlock(gMotionModal.format(0), gFormat.format(28), "H" + abcFormat.format(0)); // unwind c-axis //Commented this line, so their is no H0. in the export -AHF
-      //Added an if else statement to insert value if main spindle is active or else -AHF
-      if (SPINDLE_MAIN==getSpindle(true)) {//If main spindle active
-        writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //It will export C0. and a comment
-      } else {//Anything else
-        writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //It will export B0. and a comment
-        exist = true;
-      }
-
+      //Added an if else statement to insert value if main spindle is active or else
+        if (SPINDLE_MAIN==getSpindle(true)) {//If main spindle active
+          // writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //It will export C0. and a comment
+        } else {//Anything else
+          // writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB1)"); //It will export B0. and a comment
+          exist = true;
+        }
+    
       //Added an if statement -AHF
       if(getSpindle(true)==SPINDLE_SUB && wcsOut=="G55" && exist!=true){//Insert A0 and a comment if secondary spindle is active and if G55 exists and if there is no previous A0 (It's a mess...)
         writeBlock("A0 (A AXIS TO WORK ZERO)")
@@ -1757,7 +1757,7 @@ function onSection() {
     }
     setRotation(remaining);
   }
-  
+
   if (insertToolCall) {
     forceWorkPlane();
     cAxisEngageModal.reset();
@@ -1809,9 +1809,18 @@ function onSection() {
 
     // Turn on coolant
     setCoolant(tool.coolant);
+    if(exist==true){
+      writeBlock(feedMode, gPlaneModal.format(plane), cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true))));
+      if (SPINDLE_MAIN==getSpindle(true)) {//If main spindle active
+        writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //It will export C0. and a comment
+      } else {//Anything else
+        writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB1)"); //It will export B0. and a comment
+        exist = true;
+      }
+    }
   }
 
-  // Activate part catcher for part cutoff section
+// Activate part catcher for part cutoff section
   if (getProperty("gotPartCatcher") && partCutoff && currentSection.partCatcher) {
     engagePartCatcher(true);
   }
@@ -3235,7 +3244,7 @@ function getCommonCycle(x, y, z, r, includeRcode) {
       raptoS];
   } else {
     if(exist==true){
-      return [xOutput.format(x),
+      return [xOutput.format(x),zOutput.format(z),
         raptoS];
     } else {
       return [xOutput.format(x), yOutput.format(y),
@@ -3385,7 +3394,7 @@ function onCyclePoint(x, y, z) {
       if(InvertAxes==true){//In custom vars make this value true if you want to switch value places -AHF
         x=z;
       }      
-      counterboring = true;//Added and Assigned to custom var value true
+      // counterboring = true;//Added and Assigned to custom var value true //Commented this value, since it was hiding some results, it was placed, si when polar mode is activated it will give us the wanted results (It is a mess...)
       writeCycleClearance(plane, cycle.clearance);
       localZOutput.reset();
       writeBlock(
@@ -3394,7 +3403,7 @@ function onCyclePoint(x, y, z) {
         conditional(P > 0, pOutput.format(P)),
         feedOutput.format(F),
         lockCode
-      );
+        );
       break;
     case "chip-breaking":
       if (cycle.accumulatedDepth < cycle.depth) {
@@ -4085,7 +4094,6 @@ function onClose() {
       writeBlock(gMotionModal.format(0), gFormat.format(28), "C" + abcFormat.format(0) + " (MAIN)"); //If main spindle is active -AHF
     } else{
       writeBlock(gMotionModal.format(0), gFormat.format(28), "B" + abcFormat.format(0) + " (SUB)"); //If sub spindle is active (it's working... somehow...) -AHF
-      
     }
     // writeBlock(gFormat.format(50), "C" + abcFormat.format(0));
   }
