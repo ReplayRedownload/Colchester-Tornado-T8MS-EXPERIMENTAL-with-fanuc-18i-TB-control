@@ -21,6 +21,15 @@
   <li>G54 => G55 in Eject Part;</li>
   <li>Export description</li>
   <li>Moved M05 & M105 below M116 (Cancel synchronization)</li>
+  <li>H0. => B0./C0. when Secondary spindle or Main spindle selected</li>
+  <li>Export description, ZMIN=-# when Main spindle is selected or else ZMAX=+#</li>
+  <li>Removed in export M31 & M32 when secondary spindle is selected</li>
+  <li>When left-tapping is selected it will output M28 and when right-tapping is selected it will output M27 and for the rest it is still M29</li>
+  <li>When Flood is selected M03/M04 => M13/M14</li>
+  <li>When secondary spindle is selected C0. => B0.</li>
+  <li>Insert A0 after G55 and G00 when secondary spindle is active</li>
+  <li>If secondary spindle is active in line the with G71, change W to W*-1</li>
+  <li>Moved tool change and cooland "ON" under lines (SUB) & M111</li>
 </ul>
 
 <h3>Commented:</h3>
@@ -35,16 +44,4 @@
     <li>Added G00 A0 in a if statemeent in Eject Part</li>
     </li>Added Sub spindle retun AND Return to ABS PR in Part Eject end.</li>
     </li>Add B0(SUB) or C0(MAIN) after(C=#)to help the machine find its axis</li>
-</ul>
-
-<h3>Change values when necessary conditions are met:</h3>
-<ul>
-    <li> H0. => B0./C0. when Secondary spindle or Main spindle selected</li>
-    <li>Export description, ZMIN=-# when Main spindle is selected or else ZMAX=+#</li>
-    <li>Removed in export M31 & M32 when secondary spindle is selected</li>
-    <li>When left-tapping is selected it will output M28 and when right-tapping is selected it will output M27 and for the rest it is still M29</li>
-    <li>When Flood is selected M03/M04 => M13/M14</li>
-    <li>When secondary spindle is selected C0. => B0.</li>
-    <li>Insert A0 after G55 and G00 when secondary spindle is active</li>
-    <li>If secondary spindle is active in line the with G71, change W to W*-1</li>
 </ul>
