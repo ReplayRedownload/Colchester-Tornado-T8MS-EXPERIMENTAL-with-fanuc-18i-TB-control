@@ -29,8 +29,8 @@
   <li>When secondary spindle is selected C0. => B0.</li>
   <li>Insert A0 after G55 and G00 when secondary spindle is active</li>
   <li>If secondary spindle is active in line the with G71, change W to W*-1</li>
-  <li>Moved tool change and cooland "ON" under lines (SUB) & M111</li>
-  <li>Moved M00 below M01</li>
+  <li>Moved tool change and coolant "ON" under lines (SUB) & M111</li>
+  <li>Moved M00 below M01 & M09</li>
 </ul>
 
 <h3>Commented:</h3>
@@ -41,8 +41,9 @@
 
 <h3>Added:</h3>
 <ul>
+    <li>Added a ManualNC Stop(M00) & Optional Stop(M01) function from: https://forums.autodesk.com/t5/fusion-360-manufacture/post-edit-to-change-location-of-manual-nc-operations/td-p/9310379</li>
     <li>Added G94 in eject part</li>
     <li>Added G00 A0 in a if statemeent in Eject Part</li>
-    </li>Added Sub spindle retun AND Return to ABS PR in Part Eject end.</li>
-    </li>Add B0(SUB) or C0(MAIN) after(C=#)to help the machine find its axis</li>
+    <li>Added Sub spindle retun AND Return to ABS PR in Part Eject end.</li>
+    <li>Add B0(SUB) or C0(MAIN) after(C=#)to help the machine find its axis</li>
 </ul>
