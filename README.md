@@ -30,6 +30,7 @@
   <li>Insert A0 after G55 and G00 when secondary spindle is active</li>
   <li>If secondary spindle is active in line the with G71, change W to W*-1</li>
   <li>Moved tool change and cooland "ON" under lines (SUB) & M111</li>
+  <li>Moved M00 below M01</li>
 </ul>
 
 <h3>Commented:</h3>
