@@ -298,6 +298,15 @@ properties = {
     type: "boolean",
     value: false,
     scope: "post"
+  },
+
+  //Custom used-defifined properties -AHF
+  Stop: {
+    title: "Stop",
+    description: "Outputs stop code during when necessary in the code.",
+    type: "boolean",
+    value: false,
+    scope: "post"
   }
 };
 
@@ -448,7 +457,7 @@ var InvertAxes; //Make this var to true if you want in "counter-boring" and "lef
 
 //Int values (numbers) -AHF
 var savez; //Saves a local value initialPosiion.z for later use in the code (It is being used)
-var savex; 
+var savex; //Saves a local value initialPosiion.x for later use in the code
 var savem; //Saves a local value m for which is to be used to change M03/M04 => M13/M14, when Flood is active
 
 function getCode(code, spindle) {
@@ -1472,6 +1481,41 @@ function setSpindleOrientationTurning(section) {
 
 var bAxisOrientationTurning = new Vector(0, 0, 0);
 
+/**-AHF
+  Buffer Manual NC commands for processing later
+  Source:https://forums.autodesk.com/t5/fusion-360-manufacture/post-edit-to-change-location-of-manual-nc-operations/td-p/9310379
+*/
+var manualNC = [];
+function onManualNC(command, value) {
+  manualNC.push({command:command, value:value});
+}
+
+/**
+  Processes the Manual NC commands
+  Pass the desired command to process or leave argument list blank to process all buffered commands
+*/
+function executeManualNC(command) {
+  for (var i = 0; i < manualNC.length; ++i) {
+    if (!command || (command == manualNC[i].command)) {
+      switch(manualNC[i].command) {
+        case COMMAND_STOP:
+          writeBlock(mFormat.format(0));
+          break;
+        case COMMAND_COMMENT:
+          writeComment(manualNC[i].value);
+          break;
+      default:
+        expandManualNC(manualNC[i].command, manualNC[i].value);
+      }
+    }
+  }
+  for (var i = 0; i < manualNC.length; ++i) {
+    if (!command || (command == manualNC[i].command)) {
+      manualNC.splice(i, 1);
+    }
+  }
+}
+
 function onSection() {
   // Detect machine configuration
   machineConfiguration = (currentSection.spindle == SPINDLE_PRIMARY) ? machineConfigurationMainSpindle : machineConfigurationSubSpindle;
@@ -1563,8 +1607,14 @@ function onSection() {
     if (getProperty("optionalStop")) {
       onCommand(COMMAND_OPTIONAL_STOP);
       gMotionModal.reset();
+      
+    }
+    if (getProperty("")){
+      onCommand(COMMAND_STOP);
     }
   }
+  executeManualNC(COMMAND_STOP);//Inserts M00 in correct place -AHF
+
   // Consider part cutoff as stockTransfer operation
   if (!(stockTransferIsActive && partCutoff)) {
     stockTransferIsActive = false;
@@ -1763,7 +1813,6 @@ function onSection() {
     cAxisEngageModal.reset();
     retracted = true;
     onCommand(COMMAND_COOLANT_OFF);
-
     /** Handle multiple turrets. */
     if (gotMultiTurret) {
       var activeTurret = tool.turret;
@@ -3804,6 +3853,7 @@ function startSpindle(tappingMode, forceRPMMode, initialPosition, rpm) {
     sOutput.format(_spindleSpeed),
     spindleDir
   );
+
   // wait for spindle here if required
 }
 
