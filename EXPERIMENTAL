@@ -300,7 +300,7 @@ properties = {
     scope: "post"
   },
 
-  //Custom used-defifined properties -AHF
+  //Custom used-defifined properties (It works but isn't used) -AHF 
   Stop: {
     title: "Stop",
     description: "Outputs stop code during when necessary in the code.",
@@ -1606,14 +1606,13 @@ function onSection() {
     setYAxisMode(false);
     if (getProperty("optionalStop")) {
       onCommand(COMMAND_OPTIONAL_STOP);
-      gMotionModal.reset();
-      
+      gMotionModal.reset(); 
     }
     if (getProperty("")){
       onCommand(COMMAND_STOP);
     }
   }
-  executeManualNC(COMMAND_STOP);//Inserts M00 in correct place -AHF
+  executeManualNC(COMMAND_STOP);//Inserts M00 in correct places -AHF
 
   // Consider part cutoff as stockTransfer operation
   if (!(stockTransferIsActive && partCutoff)) {
@@ -1813,6 +1812,7 @@ function onSection() {
     cAxisEngageModal.reset();
     retracted = true;
     onCommand(COMMAND_COOLANT_OFF);
+
     /** Handle multiple turrets. */
     if (gotMultiTurret) {
       var activeTurret = tool.turret;
@@ -3853,7 +3853,6 @@ function startSpindle(tappingMode, forceRPMMode, initialPosition, rpm) {
     sOutput.format(_spindleSpeed),
     spindleDir
   );
-
   // wait for spindle here if required
 }
 
