@@ -300,14 +300,14 @@ properties = {
     scope: "post"
   },
 
-  //Custom used-defifined properties (It works but isn't used) -AHF 
-  Stop: {
-    title: "Stop",
-    description: "Outputs stop code during when necessary in the code.",
-    type: "boolean",
-    value: false,
-    scope: "post"
-  }
+  // //Custom used-defifined properties (It works but isn't used) -AHF 
+  // Stop: {
+  //   title: "Stop",
+  //   description: "Outputs stop code during when necessary in the code.",
+  //   type: "boolean",
+  //   value: false,
+  //   scope: "post"
+  // }
 };
 
 var permittedCommentChars = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,=_-/";
@@ -500,17 +500,24 @@ function getCode(code, spindle) {
   case "START_SPINDLE_CW":
     switch (spindle) {
     case SPINDLE_MAIN:
-      machineState.mainSpindleIsActive = true;
-      machineState.subSpindleIsActive = false;
-      machineState.liveToolIsActive = false;
-      return 3;
+      if (savem=8){
+        machineState.mainSpindleIsActive = true;
+        machineState.subSpindleIsActive = false;
+        machineState.liveToolIsActive = false;
+        return 13;
+      } else {
+        machineState.mainSpindleIsActive = true;
+        machineState.subSpindleIsActive = false;
+        machineState.liveToolIsActive = false;
+        return 3;
+      }
     case SPINDLE_SUB:
       machineState.subSpindleIsActive = true;
       machineState.mainSpindleIsActive = false;
       machineState.liveToolIsActive = false;
       return 103;
-    case SPINDLE_LIVE://Added an if else statement to change export values if Flood is active in Autodesk Fusion 360 -AHF
-      if (savem==8) {//If Flood is active
+    case SPINDLE_LIVE://Added an if else statement to change export values -AHF
+      if (savem==8) {//If Flood is active or Main spindle selected
         machineState.liveToolIsActive = true;
         machineState.mainSpindleIsActive = false;
         machineState.subSpindleIsActive = false;
@@ -526,17 +533,24 @@ function getCode(code, spindle) {
   case "START_SPINDLE_CCW":
     switch (spindle) {
     case SPINDLE_MAIN:
-      machineState.mainSpindleIsActive = true;
-      machineState.subSpindleIsActive = false;
-      machineState.liveToolIsActive = false;
-      return 4;
+      if (savem==8){
+        machineState.mainSpindleIsActive = true;
+        machineState.subSpindleIsActive = false;
+        machineState.liveToolIsActive = false;
+        return 14;
+      } else {
+        machineState.mainSpindleIsActive = true;
+        machineState.subSpindleIsActive = false;
+        machineState.liveToolIsActive = false;
+        return 4;
+      }
     case SPINDLE_SUB:
       machineState.subSpindleIsActive = true;
       machineState.mainSpindleIsActive = false;
       machineState.liveToolIsActive = false;
       return 104;
-    case SPINDLE_LIVE://Added an if else statement to change export values if Flood is active in Autodesk Fusion 360 -AHF
-      if (savem==8) {//If Flood is active
+    case SPINDLE_LIVE://Added an if else statement to change export value  -AHF
+      if (savem==8) {//If Flood is active Main spindle selected
           machineState.liveToolIsActive = true;
           machineState.mainSpindleIsActive = false;
           machineState.subSpindleIsActive = false;
@@ -2434,7 +2448,7 @@ function onRapid(_x, _y, _z) {
             writeBlock(gMotionModal.format(0), xOutput.format(savez) /* +" (DIF VALUE3)" */);//Uncomment when needed
           }
         } else {
-          writeBlock(gMotionModal.format(0), x, y, z /* +" (VALUE3) " */);//OG, Uncomment when needed
+          // writeBlock(gMotionModal.format(0), x, y, z /* +" (VALUE3) " */);//OG, Uncomment when needed
           // forceFeed();
           }
           if(exist!=true){
@@ -3754,18 +3768,18 @@ function setCoolant(coolant) {
     break;
   case COOLANT_AIR_THROUGH_TOOL:
     m = getCode("COOLANT_AIR_THROUGH_TOOL", getSpindle(true));
-    savem = m; //Save m to global var -AHF
+    // savem = m; //Save m to global var -AHF
     break;
   case COOLANT_AIR:
     m = getCode("COOLANT_AIR_ON", getSpindle(true));
-    savem = m; //Save m to global var -AHF
+    // savem = m; //Save m to global var -AHF
     break;
   default:
     warning(localize("Coolant not supported."));
     if (currentCoolantMode == COOLANT_OFF) {
       return;
     }
-    savem = m; //Save m to global var -AHF
+    // savem = m; //Save m to global var -AHF
     coolant = COOLANT_OFF;
     m = getCode("COOLANT_OFF", getSpindle(true));
   }
