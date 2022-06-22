@@ -48,3 +48,5 @@
     <li>Add B0(SUB) or C0(MAIN) after(C=#)to help the machine find its axis;</li>
     <li>Added another M109/M111 after tool change in case if the one before doesn't work;</li>
 </ul>
+
+<h3>Other changes misc. (Not bothered to write them down or have forgotten about them(most likely forgot about them))</li>
