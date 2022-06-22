@@ -517,7 +517,7 @@ function getCode(code, spindle) {
       machineState.liveToolIsActive = false;
       return 103;
     case SPINDLE_LIVE://Added an if else statement to change export values -AHF
-      if (savem==8) {//If Flood is active or Main spindle selected
+      if (savem==8) {//If Flood is active
         machineState.liveToolIsActive = true;
         machineState.mainSpindleIsActive = false;
         machineState.subSpindleIsActive = false;
@@ -550,7 +550,7 @@ function getCode(code, spindle) {
       machineState.liveToolIsActive = false;
       return 104;
     case SPINDLE_LIVE://Added an if else statement to change export value  -AHF
-      if (savem==8) {//If Flood is active Main spindle selected
+      if (savem==8) {//If Flood is active
           machineState.liveToolIsActive = true;
           machineState.mainSpindleIsActive = false;
           machineState.subSpindleIsActive = false;
@@ -1870,6 +1870,7 @@ function onSection() {
       writeComment(tool.comment);
     }
 
+    writeBlock(cAxisEngageModal.format(getCode("ENABLE_C_AXIS", getSpindle(true)))/* , "(INSERT ENABLE_C_AXIS AGAIN JUST IN CASE IF FIRST ONE NOT WORKING PROPERLY)" */);//Insert ENABLE_C_AXIS after tool change -AHF
     // Turn on coolant
     setCoolant(tool.coolant);
     
