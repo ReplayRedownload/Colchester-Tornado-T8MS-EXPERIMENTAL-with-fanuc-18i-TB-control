@@ -19,31 +19,32 @@
   <li>G83.6 => G83;</li>
   <li>M00 => M03;</li>
   <li>G54 => G55 in Eject Part;</li>
-  <li>Export description</li>
-  <li>Moved M05 & M105 below M116 (Cancel synchronization)</li>
-  <li>H0. => B0./C0. when Secondary spindle or Main spindle selected</li>
-  <li>Export description, ZMIN=-# when Main spindle is selected or else ZMAX=+#</li>
-  <li>Removed in export M31 & M32 when secondary spindle is selected</li>
-  <li>When left-tapping is selected it will output M28 and when right-tapping is selected it will output M27 and for the rest it is still M29</li>
-  <li>When Flood is selected M03/M04 => M13/M14</li>
-  <li>When secondary spindle is selected C0. => B0.</li>
-  <li>Insert A0 after G55 and G00 when secondary spindle is active</li>
-  <li>If secondary spindle is active in line the with G71, change W to W*-1</li>
-  <li>Moved tool change and coolant "ON" under lines (SUB) & M111</li>
-  <li>Moved M00 below M01 & M09</li>
+  <li>Export description;</li>
+  <li>Moved M05 & M105 below M116 (Cancel synchronization);</li>
+  <li>H0. => B0./C0. when Secondary spindle or Main spindle selected;</li>
+  <li>Export description, ZMIN=-# when Main spindle is selected or else ZMAX=+#;</li>
+  <li>Removed in export M31 & M32 when secondary spindle is selected;</li>
+  <li>When left-tapping is selected it will output M28 and when right-tapping is selected it will output M27 and for the rest it is still M29;</li>
+  <li>When Flood is selected M03/M04 => M13/M14;</li>
+  <li>When secondary spindle is selected C0. => B0.;</li>
+  <li>Insert A0 after G55 and G00 when secondary spindle is active;</li>
+  <li>If secondary spindle is active in line the with G71, change W to W*-1;</li>
+  <li>Moved tool change and coolant "ON" under lines (SUB) & M111;</li>
+  <li>Moved M00 below M01 & M09;</li>
 </ul>
 
 <h3>Commented:</h3>
 <ul>
-    <li>In subspindle grab removed(commented) unwated code (Torque skip on/off & G31 P98)</li>
-    <li>Commented most if not all lines which include "H"</li>
+    <li>In subspindle grab removed(commented) unwated code (Torque skip on/off & G31 P98);</li>
+    <li>Commented most if not all lines which include "H";</li>
 </ul>
 
 <h3>Added:</h3>
 <ul>
-    <li>Added a ManualNC Stop(M00) & Optional Stop(M01) function from: https://forums.autodesk.com/t5/fusion-360-manufacture/post-edit-to-change-location-of-manual-nc-operations/td-p/9310379</li>
-    <li>Added G94 in eject part</li>
-    <li>Added G00 A0 in a if statemeent in Eject Part</li>
-    <li>Added Sub spindle retun AND Return to ABS PR in Part Eject end.</li>
-    <li>Add B0(SUB) or C0(MAIN) after(C=#)to help the machine find its axis</li>
+    <li>Added a ManualNC Stop(M00) & Optional Stop(M01) function from: https://forums.autodesk.com/t5/fusion-360-manufacture/post-edit-to-change-location-of-manual-nc-operations/td-p/9310379;</li>
+    <li>Added G94 in eject part;</li>
+    <li>Added G00 A0 in a if statemeent in Eject Part;</li>
+    <li>Added Sub spindle retun AND Return to ABS PR in Part Eject end;</li>
+    <li>Add B0(SUB) or C0(MAIN) after(C=#)to help the machine find its axis;</li>
+    <li>Added another M109/M111 after tool change in case if the one before doesn't work;</li>
 </ul>
